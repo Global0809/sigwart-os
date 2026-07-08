@@ -235,6 +235,20 @@
 }
 .room-hangar::before { top: 0; background: linear-gradient(180deg, var(--bg-0) 8%, transparent); }
 .room-hangar::after { bottom: 0; background: linear-gradient(0deg, var(--bg-0) 8%, transparent); }
+
+/* the neighbours mirror those fades, so darkness ramps DOWN continuously on the
+   far side of each boundary — no step-edge that scrolls with the sections */
+.room-vehicle::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 20svh;
+  background: linear-gradient(180deg, transparent, var(--bg-0) 92%);
+  pointer-events: none; z-index: 0;
+}
+.room-comms::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 20svh;
+  background: linear-gradient(180deg, var(--bg-0) 8%, transparent);
+  pointer-events: none; z-index: 0;
+}
+.room-vehicle > *, .room-comms > * { position: relative; z-index: 1; }
 .hangar-pin {
   position: sticky; top: 0;
   height: 100svh;

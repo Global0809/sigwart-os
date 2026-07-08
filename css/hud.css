@@ -70,6 +70,26 @@ body[data-state="active"] #rail { opacity: 1; }
   border-top: 1px solid var(--line); padding-top: 10px;
 }
 
+/* ---- descent conduit: left-edge scroll progress, filled with light ---- */
+#conduit {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 3px;
+  z-index: var(--z-hud); pointer-events: none;
+  background: rgba(138, 92, 255, .07);
+  opacity: 0; transition: opacity var(--dur-l) var(--ease-out);
+}
+body[data-state="active"] #conduit { opacity: 1; }
+#conduit-fill {
+  position: absolute; top: 0; left: 0; right: 0; height: 0%;
+  background: linear-gradient(180deg, #6a5cff, #8a5cff 60%, #d24bff);
+  box-shadow: 0 0 12px rgba(160, 110, 255, .9), 0 0 30px rgba(138, 92, 255, .5);
+}
+#conduit-fill::after {
+  content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #efe4ff;
+  box-shadow: 0 0 14px #d29bff, 0 0 30px rgba(210, 120, 255, .8);
+}
+
 /* ---- toast ---- */
 #toast {
   position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%) translateY(20px);

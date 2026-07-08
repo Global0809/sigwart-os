@@ -111,6 +111,7 @@
   will-change: transform;
 }
 .portrait-card.has-photo .p-light, .portrait-card.has-photo .p-eyes { opacity: 1; }
+.p-eyes { transform-origin: 50% 38%; }   /* head pivots at the neck, not the frame center */
 .p-frame {
   border: 1px solid var(--line-hot);
   transform: translateZ(30px);
@@ -227,6 +228,13 @@
    B03 — DRONE HANGAR (sticky-pinned WebGL climax)
    ========================================================================== */
 .room-hangar { height: 240svh; padding: 0; }
+/* soft vignettes so the hangar melts into its neighbours instead of hard-cutting */
+.room-hangar::before, .room-hangar::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 24svh;
+  pointer-events: none; z-index: 2;
+}
+.room-hangar::before { top: 0; background: linear-gradient(180deg, var(--bg-0) 8%, transparent); }
+.room-hangar::after { bottom: 0; background: linear-gradient(0deg, var(--bg-0) 8%, transparent); }
 .hangar-pin {
   position: sticky; top: 0;
   height: 100svh;

@@ -38,6 +38,15 @@ function buildPanel() {
   };
   panel.querySelector('.hp-launch').addEventListener('click', onAnchorLaunch);
   panel.querySelector('.hp-name').addEventListener('click', onAnchorLaunch);
+
+  // hovering the panel itself keeps the drone awake — no wake/sleep flicker
+  panel.addEventListener('pointerenter', () => {
+    clearTimeout(hideTimer);
+    if (activeUnit) wake(activeUnit, true);
+  });
+  panel.addEventListener('pointerleave', () => {
+    if (activeUnit && !state.touch) { wake(activeUnit, false); hidePanelSoon(); }
+  });
 }
 
 function fillPanel(unit) {
@@ -95,6 +104,9 @@ function positionFrame() {
     const d = drones[unit];
     if (!btn || !d) continue;
     if (!inView) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; continue; }
+    // freeze the hit-zone while hovered — a moving target under a still cursor
+    // fires enter/leave loops (the flicker)
+    if (btn.matches(':hover')) { btn.style.pointerEvents = 'auto'; continue; }
     v3.copy(d.group.position); v3.y += 0.4;
     v3.project(camera);
     if (v3.z > 1 || Math.abs(v3.x) > 1.2) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; continue; }
@@ -247,10 +259,12 @@ function initPortraitRig(card) {
   card.style.setProperty('--head-ry', '25%');
 
   if (state.fine && state.motionOK && window.gsap) {
-    const rx = window.gsap.quickTo(card, 'rotationX', { duration: 0.6, ease: 'power3.out' });
-    const ry = window.gsap.quickTo(card, 'rotationY', { duration: 0.6, ease: 'power3.out' });
-    const ex = window.gsap.quickTo(eyes, 'x', { duration: 0.5, ease: 'power2.out' });
-    const ey = window.gsap.quickTo(eyes, 'y', { duration: 0.5, ease: 'power2.out' });
+    const rx = window.gsap.quickTo(card, 'rotationX', { duration: 0.65, ease: 'power3.out' });
+    const ry = window.gsap.quickTo(card, 'rotationY', { duration: 0.65, ease: 'power3.out' });
+    const ex = window.gsap.quickTo(eyes, 'x', { duration: 0.38, ease: 'power2.out' });
+    const ey = window.gsap.quickTo(eyes, 'y', { duration: 0.38, ease: 'power2.out' });
+    const ery = window.gsap.quickTo(eyes, 'rotationY', { duration: 0.42, ease: 'power2.out' });
+    const erz = window.gsap.quickTo(eyes, 'rotationZ', { duration: 0.5, ease: 'power2.out' });
     window.addEventListener('pointermove', (e) => {
       const r = rig.getBoundingClientRect();
       if (r.bottom < 0 || r.top > window.innerHeight) return;
@@ -259,8 +273,11 @@ function initPortraitRig(card) {
       const ny = clamp((e.clientY - cy) / (window.innerHeight * 0.5), -1, 1);
       ry(nx * 8);
       rx(-ny * 6);
-      ex(nx * 6.5);   // head leans toward the cursor
-      ey(ny * 3.5);
+      // the head TURNS, faster than the card — it leads, the body follows
+      ex(nx * 9);
+      ey(ny * 4.5);
+      ery(nx * 11);
+      erz(nx * 2.4);
       card.style.setProperty('--mx', (50 + nx * 32) + '%');
       card.style.setProperty('--my', (38 + ny * 22) + '%');
     }, { passive: true });

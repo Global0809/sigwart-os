@@ -62,7 +62,15 @@ function init() {
     initParticles();
     initCamera();
     initDrones();
-    onFrame((dt, t) => { tickWorld(dt, t); tickParticles(dt, t); }, 10);
+    onFrame((dt, t) => {
+      tickWorld(dt, t);
+      tickParticles(dt, t);
+      // reactive sound: slime gurgles when the liquid is disturbed, wind rises with scroll
+      const b0 = world.blobs[0];
+      const jiggle = b0 && b0.mvv ? Math.min(b0.mvv.length() * 0.22, 1) : 0;
+      audio.setSlime(Math.min((world.stir || 0) * 0.7 + jiggle, 1));
+      audio.setWind(Math.min(Math.abs(state.scrollVel || 0) * 1.1, 1));
+    }, 10);
     glOK = true;
   } catch (err) {
     console.error('[SIGWART_OS] GL stage failed — running in flat mode', err);

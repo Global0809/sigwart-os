@@ -214,6 +214,42 @@ export function rumble(dur = 1.6, g = 0.4) {
   sub.start(t0); sub.stop(t0 + dur + 0.1);
 }
 
+/* ---------- continuous reactive voices: slime (ferrofluid) + wind (scroll) ---------- */
+let slimeGain = null, slimeFilter = null, windGain = null, windFilter = null;
+
+function ensureVoices() {
+  if (!ctx || slimeGain) return;
+  const sn = noiseSource('brown');
+  slimeFilter = ctx.createBiquadFilter();
+  slimeFilter.type = 'bandpass'; slimeFilter.frequency.value = 420; slimeFilter.Q.value = 1.6;
+  slimeGain = ctx.createGain(); slimeGain.gain.value = 0;
+  sn.connect(slimeFilter); slimeFilter.connect(slimeGain); slimeGain.connect(master);
+  sn.start();
+
+  const wn = noiseSource('white');
+  windFilter = ctx.createBiquadFilter();
+  windFilter.type = 'bandpass'; windFilter.frequency.value = 1500; windFilter.Q.value = 0.7;
+  windGain = ctx.createGain(); windGain.gain.value = 0;
+  wn.connect(windFilter); windFilter.connect(windGain); windGain.connect(master);
+  wn.start();
+}
+
+export function setSlime(v) {
+  if (!ctx) return;
+  ensureVoices();
+  const k = Math.min(Math.max(v, 0), 1);
+  slimeGain.gain.setTargetAtTime(k * 0.05, ctx.currentTime, 0.08);
+  slimeFilter.frequency.setTargetAtTime(380 + k * 520, ctx.currentTime, 0.1);
+}
+
+export function setWind(v) {
+  if (!ctx) return;
+  ensureVoices();
+  const k = Math.min(Math.max(v, 0), 1);
+  windGain.gain.setTargetAtTime(k * 0.06, ctx.currentTime, 0.06);
+  windFilter.frequency.setTargetAtTime(1100 + k * 1600, ctx.currentTime, 0.08);
+}
+
 export function powerSwell(dur = 1.3) {
   if (!ctx || state.muted) return;
   const t0 = now();

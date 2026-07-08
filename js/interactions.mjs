@@ -24,12 +24,18 @@ function initCursor() {
     rx(e.clientX); ry(e.clientY);
   }, { passive: true });
 
-  // context states via delegation
+  // context states via delegation — debounced so grazing element edges doesn't
+  // yo-yo the ring (that read as the cursor "sticking")
+  let stateTimer = 0;
   document.addEventListener('pointerover', e => {
     const t = e.target;
-    if (t.closest && t.closest('.bay-focus')) document.body.dataset.cursor = 'reticle';
-    else if (t.closest && t.closest('a, button, [data-magnetic], [data-secret]')) document.body.dataset.cursor = 'engage';
-    else document.body.dataset.cursor = '';
+    let next = '';
+    if (t.closest && t.closest('.bay-focus')) next = 'reticle';
+    else if (t.closest && t.closest('a, button, [data-magnetic], [data-secret], .ct-l')) next = 'engage';
+    clearTimeout(stateTimer);
+    stateTimer = setTimeout(() => {
+      if (document.body.dataset.cursor !== next) document.body.dataset.cursor = next;
+    }, 70);
   }, { passive: true });
 
   bus.on('boot:done', () => document.body.classList.add('cursor-live'));
@@ -45,7 +51,7 @@ function initMagnetic() {
     setX: gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power3.out' }),
     setY: gsap.quickTo(el, 'y', { duration: 0.4, ease: 'power3.out' }),
     rect: null,
-    max: el.classList.contains('cta-lines') ? 10 : 5,
+    max: el.classList.contains('cta-lines') ? 7 : 4,
   }));
   const refresh = () => els.forEach(m => { m.rect = m.el.getBoundingClientRect(); });
   refresh();
@@ -59,7 +65,7 @@ function initMagnetic() {
       const cy = m.rect.top + m.rect.height / 2;
       const dxp = e.clientX - cx, dyp = e.clientY - cy;
       const dist = Math.hypot(dxp, dyp);
-      const range = Math.max(m.rect.width, 90);
+      const range = Math.max(m.rect.width, 70);
       if (dist < range) {
         const pull = (1 - dist / range);
         m.setX(clamp(dxp * pull * 0.4, -m.max, m.max));
@@ -71,16 +77,44 @@ function initMagnetic() {
   }, { passive: true });
 }
 
-/* ---------- reactive chrome title (glow + soft audio cue; magnetic via data attr) ---------- */
+/* ---------- living chrome title: each initial reveals its meaning + plays a note ---------- */
+const TITLE_WORDS = {
+  S: 'SONIC', I: 'IMMERSIVE', G: 'GROOVE', W: 'WAVEFORM',
+  A: 'AMPLITUDE', R: 'RESONANCE', T: 'TEMPO',
+};
+const TITLE_NOTES = [523, 587, 659, 698, 784, 880, 988];   // a rising major scale
+
 function initTitle() {
   const title = document.querySelector('.chrome-title');
   if (!title) return;
-  let last = 0;
-  title.addEventListener('pointerenter', () => {
-    title.classList.add('lit');
-    const now = performance.now();
-    if (now - last > 600) { last = now; audio.blip(1240, 0.11, 0.05); }
+  const text = title.textContent.trim();
+  title.textContent = '';
+  title.setAttribute('aria-label', text);
+  const letters = [];
+  [...text].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'ct-l';
+    s.textContent = ch;
+    s.setAttribute('aria-hidden', 'true');
+    s.dataset.word = TITLE_WORDS[ch] || '';
+    title.appendChild(s);
+    letters.push(s);
+    s.addEventListener('pointerenter', () => {
+      audio.blip(TITLE_NOTES[i % TITLE_NOTES.length], 0.14, 0.07);
+      if (window.gsap && state.motionOK) window.gsap.to(s, { scale: 1.12, duration: 0.25, ease: 'power2.out' });
+    });
+    s.addEventListener('pointerleave', () => {
+      if (window.gsap) window.gsap.to(s, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+    });
   });
+  // idle breathing — letters float on a slow stagger so the word never sits dead
+  if (window.gsap && state.motionOK) {
+    window.gsap.to(letters, {
+      y: -4, duration: 2.4, ease: 'sine.inOut',
+      yoyo: true, repeat: -1, stagger: { each: 0.28, yoyo: true },
+    });
+  }
+  title.addEventListener('pointerenter', () => title.classList.add('lit'));
   title.addEventListener('pointerleave', () => title.classList.remove('lit'));
 }
 

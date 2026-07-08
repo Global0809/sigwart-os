@@ -42,6 +42,8 @@ export function initScroll() {
       setProgress(self.progress);
       state.scrollP = self.progress;
       state.scrollVel = (self.getVelocity ? self.getVelocity() : 0) / 4000;
+      const fill = document.getElementById('conduit-fill');
+      if (fill) fill.style.height = (self.progress * 100).toFixed(2) + '%';
     },
   });
 
@@ -52,6 +54,7 @@ export function initScroll() {
     state.room = r;
     document.body.dataset.room = r;
     links.forEach(a => a.classList.toggle('is-here', a.dataset.floor === r));
+    audio.blip(310, 0.06, 0.05);   // soft elevator-floor chime per level
     bus.emit('room', r);
   };
   document.querySelectorAll('.room').forEach(sec => {

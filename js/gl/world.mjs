@@ -169,7 +169,7 @@ export function tickWorld(dt, t) {
       _mv.multiplyScalar(tt).add(camera.position);
       b.membrane.worldToLocal(_mv);
       const L = _mv.length();
-      if (L > 6) _mv.multiplyScalar(6 / L);
+      if (L > 10) _mv.multiplyScalar(10 / L);
       b.mp = b.mp || new THREE.Vector3(9, 9, 9);
       b.mvv = b.mvv || new THREE.Vector3();
       _sp.copy(_mv).sub(b.mp).multiplyScalar(26 * dt);
@@ -635,9 +635,14 @@ function makeNeuralCore(g, x, y, z, radius, spin) {
         float mLen = length(uMouse);
         vec3 mDir = uMouse / max(mLen, 1e-4);
         float align = max(dot(normalize(p), mDir), 0.0);
-        float farPull = pow(align, 7.0) * clamp(mLen - 0.6, 0.0, 2.6) * 0.55;
+        // ALWAYS touching: the tendril tip extends the full distance to the cursor,
+        // a narrow spike riding on a wide organic swell
+        float stretchLen = max(mLen - 0.95, 0.0);
+        float tip = pow(align, 12.0);
+        float baseSwell = pow(align, 3.0) * 0.22;
         float fingers = 0.62 + 0.58 * snoise(p * 3.2 + vec3(t * 0.5));
-        float reach = (closeReach + farPull) * fingers;
+        float farPull = tip * stretchLen * 0.94 + baseSwell * min(stretchLen, 1.5);
+        float reach = closeReach * fingers + farPull * (0.78 + 0.22 * fingers);
         vec3 toM = normalize(uMouse - p + vec3(1e-4));
         float rip = sin(md * 9.0 - t * 6.0) * exp(-md * 1.4) * uStir;
         vec3 pos = p * breath + n * (nz * 0.34 + rip * 0.16) + toM * reach;
@@ -850,6 +855,12 @@ function makeNeuralCore(g, x, y, z, radius, spin) {
   ringTilt.rotation.z = 0.14;
   ringTilt.add(ringPts);
   group.add(ringTilt);
+
+  // tendrils stretch far past the base sphere — never let the culler blink them out
+  membrane.frustumCulled = false;
+  lines.frustumCulled = false;
+  nodes.frustumCulled = false;
+  ringPts.frustumCulled = false;
 
   /* --- soft halo behind --- */
   const halo = glowSprite(0x8a5cff, 4.8, 4.8, 0.14);

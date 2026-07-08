@@ -20,6 +20,38 @@
   filter: drop-shadow(0 2px 22px rgba(138, 92, 255, .30)) drop-shadow(0 0 2px rgba(255, 255, 255, .18));
 }
 .chrome-title { transition: filter .45s var(--ease-out); }
+.chrome-title .ct-l {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  will-change: transform;
+  /* split letters must carry their own chrome — a parent's background-clip:text
+     does not paint through child spans */
+  background: linear-gradient(180deg,
+    #ffffff 0%, #f0ecfb 16%, #c6bfe0 32%, #857BA8 45%,
+    #2c2350 51%, #6a5f95 56%, #d9d2f0 68%, #f8f6ff 76%,
+    #9c8fc9 88%, #453a6e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* each initial reveals its meaning in a sleek HUD chip */
+.chrome-title .ct-l::after {
+  content: attr(data-word);
+  position: absolute; left: 50%; top: -0.58em;
+  transform: translate(-50%, 10px);
+  font-family: var(--font-hud); font-size: clamp(8px, 0.72vw, 11px); font-weight: 700;
+  letter-spacing: .34em; text-indent: .34em;
+  color: var(--vio-hot); -webkit-text-fill-color: var(--vio-hot);
+  background: rgba(12, 6, 26, .78);
+  border: 1px solid var(--line-hot);
+  padding: 5px 8px;
+  opacity: 0;
+  transition: opacity .25s var(--ease-out), transform .25s var(--ease-out);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.chrome-title .ct-l:hover::after { opacity: 1; transform: translate(-50%, 0); }
 .chrome-title.lit {
   filter: drop-shadow(0 2px 34px rgba(160, 110, 255, .5)) drop-shadow(0 0 4px rgba(255, 255, 255, .3)) brightness(1.07);
 }

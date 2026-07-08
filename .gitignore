@@ -1,2 +1,8 @@
 ﻿Thumbs.db
 desktop.ini
+
+# generated upload copy (rebuilt on demand — don't version the duplicate)
+_deploy/
+
+# local machine-specific Claude Code settings
+.claude/settings.local.json

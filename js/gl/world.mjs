@@ -363,9 +363,23 @@ function buildHangar(g) {
   g.add(slab);
   world.secretWall = slab;
 
-  // blast doors (slide apart on approach) — set into the back wall
+  // opaque skirt under the floor: the camera must never see past the floor's
+  // front edge into the comms room below (rooms are stacked close)
+  const skirt = new THREE.Mesh(
+    new THREE.PlaneGeometry(70, 44),
+    new THREE.MeshBasicMaterial({ color: 0x030106 })
+  );
+  skirt.rotation.x = -Math.PI / 2;
+  skirt.position.set(0, fy - 0.08, 4);
+  g.add(skirt);
+
+  // blast doors (slide apart on approach) — near-black so the parked slabs
+  // don't read as grey boxes at the frame edges
+  const matDoor = matColumn.clone();
+  matDoor.color.setHex(0x07030e);
+  matDoor.envMapIntensity = 0.2;
   const doorGeo = new THREE.BoxGeometry(9.4, 7.2, 0.6);
-  const doorL = new THREE.Mesh(doorGeo, matColumn);
+  const doorL = new THREE.Mesh(doorGeo, matDoor);
   doorL.position.set(-4.72, fy + 3.6, cz - D / 2 + 0.5);
   const doorR = doorL.clone();
   doorR.position.x = 4.72;
@@ -376,7 +390,7 @@ function buildHangar(g) {
   seamR.position.x = -4.66;
   doorR.add(seamR);
   g.add(doorL, doorR);
-  const doorGlow = glowSprite(0xb9a0ff, 15, 9, 0);
+  const doorGlow = glowSprite(0xb9a0ff, 10, 6.5, 0);
   doorGlow.position.set(0, fy + 3.4, cz - D / 2 + 0.35);
   g.add(doorGlow);
   world.doors = {
@@ -384,7 +398,7 @@ function buildHangar(g) {
     open(amt) {
       doorL.position.x = -4.72 - amt * 8.6;
       doorR.position.x = 4.72 + amt * 8.6;
-      doorGlow.material.opacity = amt * 0.5;
+      doorGlow.material.opacity = amt * 0.28;   // soft breath of light, not a visible oval
     },
   };
 

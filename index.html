@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIGWART_OS // UNDERGROUND HEADQUARTERS</title>
+<meta name="description" content="Enter DJ Jeff Sigwart's futuristic underground headquarters. Boot the OS, descend the facility, launch the drones.">
+<meta name="theme-color" content="#050208">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="SIGWART_OS // UNDERGROUND HEADQUARTERS">
+<meta property="og:description" content="A living cyberpunk operating system. Boot in. Descend. Launch the drones.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/photos/portrait.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f2ecff'/%3E%3Cstop offset='.55' stop-color='%23a98fe8'/%3E%3Cstop offset='1' stop-color='%236a5cff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' fill='%23050208'/%3E%3Cpath d='M32 5 L37.5 26.5 L59 32 L37.5 37.5 L32 59 L26.5 37.5 L5 32 L26.5 26.5 Z' fill='url(%23g)'/%3E%3C/svg%3E">
+
+<link rel="preload" href="lib/fonts/orbitron-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="lib/fonts/orbitron-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="lib/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="lib/fonts/jetbrains-mono-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/effects.css">
+<link rel="stylesheet" href="css/hud.css">
+<link rel="stylesheet" href="css/sections.css">
+
+<script src="lib/gsap/gsap.min.js" defer></script>
+<script src="lib/gsap/ScrollTrigger.min.js" defer></script>
+<script src="lib/gsap/Draggable.min.js" defer></script>
+<script src="lib/gsap/InertiaPlugin.min.js" defer></script>
+<script src="lib/lenis/lenis.min.js" defer></script>
+<script type="importmap">
+{ "imports": { "three": "./lib/three/three.module.min.js", "three/addons/": "./lib/three/addons/" } }
+</script>
+<script type="module" src="js/main.mjs"></script>
+<noscript>
+<style>#boot, #cursor, #gl { display: none !important; } body { overflow: auto !important; } #hud, #rail { opacity: 1 !important; }</style>
+</noscript>
+</head>
+
+<body data-state="boot-idle" data-tier="2">
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<a class="skip-link" href="#comms">Skip to direct channels</a>
+
+<!-- ======================== fixed HUD chrome ======================== -->
+<header id="hud">
+  <div class="hud-top">
+    <a class="hud-brand" href="#gate" data-magnetic>
+      <svg class="hud-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5 L14 10 L22.5 12 L14 14 L12 22.5 L10 14 L1.5 12 L10 10 Z"/></svg>
+      SIGWART_OS <span class="hud-ver">v5.0</span>
+    </a>
+    <div class="hud-status hud-label" aria-hidden="true">
+      <span id="hud-pwr">PWR 04.2kW</span>
+      <span id="hud-net">NET 98.7%</span>
+      <span id="hud-clock">00:00:00</span>
+    </div>
+    <div class="hud-controls">
+      <button class="hud-toggle" id="tg-snd" aria-pressed="false" aria-label="Toggle sound" data-magnetic><span class="led"></span>SND</button>
+    </div>
+  </div>
+</header>
+
+<nav id="rail" aria-label="Facility levels">
+  <a href="#gate" data-floor="gate"><span class="rail-label hud-label">GATE</span><span class="rail-dot"></span></a>
+  <a href="#operator" data-floor="operator"><span class="rail-label hud-label">OPERATOR</span><span class="rail-dot"></span></a>
+  <a href="#vehicle" data-floor="vehicle"><span class="rail-label hud-label">VEHICLE</span><span class="rail-dot"></span></a>
+  <a href="#hangar" data-floor="hangar"><span class="rail-label hud-label">HANGAR</span><span class="rail-dot"></span></a>
+  <a href="#comms" data-floor="comms"><span class="rail-label hud-label">COMMS</span><span class="rail-dot"></span></a>
+  <div id="rail-depth" aria-hidden="true">-000.0M</div>
+</nav>
+
+<!-- ======================== scrolling world ======================== -->
+<main id="world">
+
+  <!-- B00 GATE -->
+  <section id="gate" class="room room-gate" data-room="gate">
+    <div class="gate-grid">
+      <div class="gate-titles">
+        <p class="gate-access hud-label">ACCESS GRANTED</p>
+        <h1 class="chrome-title" data-text="SIGWART" data-magnetic>SIGWART</h1>
+        <div class="gate-sub hud-label">
+          <span>UNDERGROUND</span><span class="sub-sep"></span><span>HEADQUARTERS</span>
+        </div>
+        <div class="gate-meta hud-label">
+          <div class="gm"><span>OPERATOR</span><b>JEFF SIGWART</b></div>
+          <div class="gm"><span>UNIT</span><b>OSB.DJ.50</b></div>
+          <div class="gm"><span>TEMPO</span><b>128.0 BPM</b></div>
+          <div class="gm"><span>DEPTH</span><b id="gate-depth">SURFACE</b></div>
+        </div>
+      </div>
+
+      <div class="portrait-rig" id="portrait-rig">
+        <div class="portrait-card" id="portrait-card">
+          <div class="p-layer p-glow" aria-hidden="true"></div>
+          <div class="p-layer p-photo" aria-hidden="true" role="img" aria-label="Portrait of Jeff Sigwart"></div>
+          <div class="p-layer p-light" aria-hidden="true"></div>
+          <div class="p-layer p-eyes" aria-hidden="true"></div>
+          <div class="p-fallback" aria-hidden="true">
+            <svg viewBox="0 0 200 240" fill="none" stroke="rgba(180,140,255,.5)" stroke-width="1">
+              <ellipse cx="100" cy="86" rx="44" ry="54"/>
+              <ellipse cx="100" cy="86" rx="18" ry="54" opacity=".35"/>
+              <path d="M56 86 Q100 110 144 86" opacity=".55"/>
+              <path d="M100 32 V140" opacity=".28"/>
+              <path d="M30 216 Q100 150 170 216" opacity=".7"/>
+              <path d="M46 228 Q100 172 154 228" opacity=".35"/>
+              <path d="M100 8 L103 19 L114 22 L103 25 L100 36 L97 25 L86 22 L97 19 Z" fill="rgba(212,180,255,.85)" stroke="none"/>
+            </svg>
+            <p class="pf-label hud-label">NO VISUAL FEED<b>AUDIO SIGNATURE LOCKED</b></p>
+          </div>
+          <div class="p-layer p-scan scanlines" aria-hidden="true"></div>
+          <div class="p-layer p-frame" aria-hidden="true">
+            <span class="p-live hud-label"><span class="led"></span>LIVE</span>
+            <span class="p-tag">FEED 01 // OPERATOR</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gate-cue hud-label" aria-hidden="true">
+      <span>SCROLL TO DESCEND</span>
+      <span class="cue-line"></span>
+    </div>
+  </section>
+
+  <!-- B01 OPERATOR -->
+  <section id="operator" class="room room-operator" data-room="operator">
+    <header class="room-head">
+      <span class="room-index hud-label">B01</span>
+      <h2 class="room-title title-grad">OPERATOR</h2>
+      <span class="room-line"></span>
+      <span class="room-count hud-label">01 / 04</span>
+    </header>
+    <div class="operator-grid">
+      <article class="glass id-card" data-gravity data-reveal>
+        <div class="ticks" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
+        <div class="idc-head hud-label"><span>IDENTITY MODULE</span><span class="ok">VERIFIED</span></div>
+        <h3 class="id-name">JEFF<br>SIGWART</h3>
+        <dl class="id-rows hud-label">
+          <div><dt>UNIT</dt><dd>OSB.DJ.50</dd></div>
+          <div><dt>ROLE</dt><dd>AUDIO OPERATIONS</dd></div>
+          <div><dt>STATUS</dt><dd class="ok">ACTIVE</dd></div>
+          <div><dt>CLEARANCE</dt><dd>LEVEL 05</dd></div>
+        </dl>
+        <div class="barcode" aria-hidden="true"></div>
+        <div class="idc-serial hud-label"><span>SN 2000-OSB-50</span><span>DS-2026</span></div>
+      </article>
+
+      <figure class="glass archive-card" id="archive-card" data-gravity data-reveal>
+        <div class="ac-window">
+          <div class="ac-photo" aria-hidden="true"></div>
+          <div class="ac-fallback" aria-hidden="true">
+            <svg viewBox="0 0 200 250" fill="none" stroke="rgba(180,140,255,.45)" stroke-width="1">
+              <rect x="10" y="10" width="180" height="230" opacity=".4"/>
+              <circle cx="100" cy="112" r="62" opacity=".3" stroke-dasharray="2 6"/>
+              <path d="M100 42 L110 102 L170 112 L110 122 L100 182 L90 122 L30 112 L90 102 Z" stroke="rgba(220,190,255,.8)" fill="rgba(90,50,190,.15)"/>
+              <line x1="24" y1="216" x2="118" y2="216" opacity=".5"/>
+              <line x1="24" y1="224" x2="86" y2="224" opacity=".3"/>
+            </svg>
+          </div>
+          <div class="scanlines" aria-hidden="true"></div>
+        </div>
+        <figcaption class="ac-caption hud-label"><span>ARCHIVE // MISSION 2000</span><span class="dim">IMG_0001</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- B02 VEHICLE BAY -->
+  <section id="vehicle" class="room room-vehicle" data-room="vehicle">
+    <header class="room-head">
+      <span class="room-index hud-label">B02</span>
+      <h2 class="room-title title-grad">VEHICLE BAY</h2>
+      <span class="room-line"></span>
+      <span class="room-count hud-label">02 / 04</span>
+    </header>
+    <div class="veh-pan" id="veh-pan" data-reveal>
+      <div class="veh-img" aria-hidden="true" role="img" aria-label="Jeff Sigwart with the MK-VII transport"></div>
+      <div class="veh-fallback" aria-hidden="true">
+        <svg viewBox="0 0 840 360" preserveAspectRatio="xMidYMid slice" fill="none">
+          <line x1="0" y1="302" x2="840" y2="302" stroke="rgba(150,110,255,.22)"/>
+          <ellipse cx="430" cy="306" rx="270" ry="14" fill="rgba(138,92,255,.20)"/>
+          <path d="M140 300 C160 258 220 236 320 230 C430 222 560 226 640 244 C700 258 716 282 720 300 Z" stroke="rgba(190,150,255,.55)" fill="rgba(60,30,130,.16)"/>
+          <path d="M298 232 C340 206 470 204 522 228" stroke="rgba(190,150,255,.4)"/>
+          <path d="M652 264 L714 286" stroke="#b47aff" stroke-width="3" opacity=".9"/>
+          <circle cx="252" cy="300" r="27" stroke="rgba(150,110,255,.38)"/>
+          <circle cx="252" cy="300" r="9" stroke="rgba(150,110,255,.5)"/>
+          <circle cx="598" cy="300" r="27" stroke="rgba(150,110,255,.38)"/>
+          <circle cx="598" cy="300" r="9" stroke="rgba(150,110,255,.5)"/>
+          <g fill="rgba(190,140,255,.7)" stroke="none">
+            <path d="M80 330 l2.6 7 7 2.6 -7 2.6 -2.6 7 -2.6 -7 -7 -2.6 7 -2.6 Z"/>
+            <path d="M760 322 l2.2 6 6 2.2 -6 2.2 -2.2 6 -2.2 -6 -6 -2.2 6 -2.2 Z" opacity=".7"/>
+            <path d="M180 344 l1.8 5 5 1.8 -5 1.8 -1.8 5 -1.8 -5 -5 -1.8 5 -1.8 Z" opacity=".5"/>
+            <path d="M660 342 l1.8 5 5 1.8 -5 1.8 -1.8 5 -1.8 -5 -5 -1.8 5 -1.8 Z" opacity=".6"/>
+          </g>
+        </svg>
+      </div>
+      <div class="veh-sweep" aria-hidden="true"></div>
+      <div class="scanlines" aria-hidden="true"></div>
+      <div class="veh-tags hud-label">
+        <span>MK-VII TRANSPORT</span>
+        <span>PWR CELLS <b>####-</b></span>
+      </div>
+    </div>
+    <div class="veh-note hud-label"><span>MK-VII // LIVE FEED</span><span>BAY CAM 02 // 60 FPS</span></div>
+  </section>
+
+  <!-- B03 DRONE HANGAR -->
+  <section id="hangar" class="room room-hangar" data-room="hangar">
+    <div class="hangar-pin">
+      <header class="room-head">
+        <span class="room-index hud-label">B03</span>
+        <h2 class="room-title title-grad">DRONE HANGAR</h2>
+        <span class="room-line"></span>
+        <span class="room-count hud-label">03 / 04</span>
+      </header>
+      <p class="hangar-status hud-label" id="hangar-status"><span class="led" aria-hidden="true"></span><span id="hangar-status-text">BAY DOORS SEALED</span></p>
+
+      <div id="bays" role="group" aria-label="Drone launch bays">
+        <button class="bay-focus" id="bay-ig" data-unit="ig" aria-label="Launch the Instagram drone IG-01 VISION — opens Instagram in a new tab"></button>
+        <button class="bay-focus" id="bay-tt" data-unit="tt" aria-label="Launch the TikTok drone TT-02 PULSE — opens TikTok in a new tab"></button>
+        <button class="bay-focus" id="bay-fb" data-unit="fb" aria-label="Launch the Facebook drone FB-03 RELAY — opens Facebook in a new tab"></button>
+      </div>
+
+      <div class="wall-panel" id="secret-panel" data-secret aria-label="Unmarked wall panel" role="button" tabindex="-1"></div>
+    </div>
+  </section>
+
+  <!-- B04 TRANSMISSION -->
+  <section id="comms" class="room room-comms" data-room="comms">
+    <header class="room-head">
+      <span class="room-index hud-label">B04</span>
+      <h2 class="room-title title-grad">TRANSMISSION</h2>
+      <span class="room-line"></span>
+      <span class="room-count hud-label">04 / 04</span>
+    </header>
+    <p class="comms-eol hud-label">END OF LINE <span class="dim">//</span> CHANNELS OPEN</p>
+
+    <div class="comms-cards">
+      <a class="glass comms-card" data-gravity data-reveal href="https://www.instagram.com/osb.dj.50?igsh=a2p3eHpqdmNmbW9s&amp;utm_source=qr" target="_blank" rel="noopener">
+        <span class="cc-callsign hud-label">IG-01 // VISION</span>
+        <span class="cc-row"><span class="cc-name">INSTAGRAM</span><span class="cc-arrow" aria-hidden="true">-&#8599;</span></span>
+        <span class="hud-label dim">VISUAL FEED</span>
+      </a>
+      <a class="glass comms-card" data-gravity data-reveal href="https://www.tiktok.com/@user69495488?_r=1&amp;_t=ZT-95BTlckRpeA" target="_blank" rel="noopener">
+        <span class="cc-callsign hud-label">TT-02 // PULSE</span>
+        <span class="cc-row"><span class="cc-name">TIKTOK</span><span class="cc-arrow" aria-hidden="true">-&#8599;</span></span>
+        <span class="hud-label dim">MOTION FEED</span>
+      </a>
+      <a class="glass comms-card" data-gravity data-reveal href="https://www.facebook.com/osb.dj.50?mibextid=wwXIfr&amp;rdid=xWQbpoFmQVSob9eb&amp;share_url=https%3A%2F%2F" target="_blank" rel="noopener">
+        <span class="cc-callsign hud-label">FB-03 // RELAY</span>
+        <span class="cc-row"><span class="cc-name">FACEBOOK</span><span class="cc-arrow" aria-hidden="true">-&#8599;</span></span>
+        <span class="hud-label dim">SIGNAL RELAY</span>
+      </a>
+    </div>
+
+    <div class="comms-mid">
+      <button id="reinit" class="cta-lines" data-magnetic>RE-INITIALIZE</button>
+    </div>
+
+    <footer class="site-foot hud-label">
+      <span id="barcode-foot" class="barcode-mini" role="button" tabindex="0" aria-label="Serial plate">&#9646;&#9647;&#9646;&#9646;&#9647;&#9646;&#9646;&#9646;&#9647;&#9646;&#9647;&#9646;</span>
+      <span>SIGWART_OS // BUILT BY AICANFEEL</span>
+      <span>DS-2026 // V5.0</span>
+    </footer>
+  </section>
+</main>
+
+<!-- ======================== overlays ======================== -->
+<div id="anchors" aria-hidden="false"></div>
+<div id="sheet"></div>
+<div id="flash" aria-hidden="true"></div>
+
+<div id="fx" aria-hidden="true">
+  <div class="grain"></div>
+  <div class="crt"></div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div id="boot" role="dialog" aria-modal="true" aria-label="SIGWART_OS boot sequence">
+  <div class="boot-doors" aria-hidden="true"><div class="bd-l"></div><div class="bd-r"></div></div>
+  <div class="boot-scanline" aria-hidden="true"></div>
+  <div class="boot-frame">
+    <div class="ticks" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
+    <div class="boot-head hud-label"><span class="bh-title">SIGWART_OS</span><span>KERNEL 5.0.128</span></div>
+    <pre id="boot-term">STANDBY // AWAITING OPERATOR</pre>
+    <div class="boot-actions">
+      <button id="boot-init" class="cta-lines">INITIALIZE</button>
+    </div>
+    <div class="boot-foot"><span>SECURE CHANNEL</span><span>128.0 BPM</span><span>Y2K KERNEL</span></div>
+  </div>
+</div>
+
+<div id="cursor" aria-hidden="true">
+  <div class="cur-ring"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
+  <div class="cur-dot"></div>
+  <span class="cur-tag hud-label">SCAN</span>
+</div>
+
+</body>
+</html>

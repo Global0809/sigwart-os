@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "PowerShell(Test-Path \"C:\\\\Program Files\\\\nodejs\\\\node.exe\"; Test-Path \"$env:LOCALAPPDATA\\\\Programs\\\\nodejs\\\\node.exe\"; Test-Path \"$env:APPDATA\\\\nvm\"; Test-Path \"$env:LOCALAPPDATA\\\\nvs\"; Test-Path \"$env:ProgramFiles\\\\Git\\\\bin\\\\git.exe\")",
+      "PowerShell(try { python --version } catch { \"no python\" }; try { py --version } catch { \"no py\" }; try { \\(Get-Command curl.exe -ErrorAction Stop\\).Source } catch { \"no curl.exe\" })",
+      "PowerShell(Get-Command curl.exe | ForEach-Object Source; @\\('node','npm','python','py'\\) | ForEach-Object { $c = Get-Command $_ -ErrorAction SilentlyContinue; \"$_ => \" + $\\(if \\($c\\) { $c.Source } else { 'ABSENT' }\\) }; \"--- C:\\\\Claude contents:\"; Get-ChildItem C:\\\\Claude -Force | Select-Object Name)",
+      "Bash(curl -s https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js)",
+      "PowerShell(powershell -NoProfile -ExecutionPolicy Bypass -File C:\\\\Claude\\\\download-libs.ps1)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $bmp = New-Object System.Drawing.Bitmap\\(400, 500\\); $g = [System.Drawing.Graphics]::FromImage\\($bmp\\); $rect = New-Object System.Drawing.Rectangle\\(0, 0, 400, 500\\); $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush\\($rect, [System.Drawing.Color]::FromArgb\\(40, 10, 80\\), [System.Drawing.Color]::FromArgb\\(180, 120, 255\\), 90\\); $g.FillRectangle\\($brush, 0, 0, 400, 500\\); $g.Dispose\\(\\); $bmp.Save\\('C:\\\\Claude\\\\assets\\\\photos\\\\portrait.jpg', [System.Drawing.Imaging.ImageFormat]::Jpeg\\); $bmp.Dispose\\(\\); 'test portrait created')",
+      "PowerShell('test portrait removed')",
+      "PowerShell($p = Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','C:\\\\Claude\\\\serve.ps1','-Port','4180' -PassThru -WindowStyle Hidden; Start-Sleep 3; $r1 = & curl.exe -s -o NUL -w '%{http_code}' http://localhost:4180/; $r2 = & curl.exe -s -o NUL -w '%{http_code}' http://localhost:4180/js/main.mjs; $r3 = & curl.exe -s -o NUL -w '%{http_code}' http://localhost:4180/lib/fonts/orbitron-latin-800-normal.woff2; $r4 = & curl.exe -s -o NUL -w '%{http_code}' http://localhost:4180/../secret; $ct = & curl.exe -sI http://localhost:4180/js/main.mjs; Stop-Process -Id $p.Id -Force; \"root=$r1 mjs=$r2 woff2=$r3 traversal=$r4\"; \\($ct -split \"`n\" | Select-String 'Content-Type'\\))",
+      "PowerShell(Get-ChildItem C:\\\\Claude\\\\assets\\\\photos | Select-Object Name, @{n='KB';e={[math]::Round\\($_.Length/1KB,1\\)}} | Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem C:\\\\Claude\\\\assets\\\\photos -File | Select-Object Name, @{n='KB';e={[math]::Round\\($_.Length/1KB,1\\)}}, LastWriteTime | Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem C:\\\\Claude\\\\assets\\\\photos -File | Select-Object Name, @{n='MB';e={[math]::Round\\($_.Length/1MB,2\\)}} | Format-Table -AutoSize)"
+    ]
+  }
+}

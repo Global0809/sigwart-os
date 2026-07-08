@@ -1,0 +1,235 @@
+/* SIGWART_OS // hud — fixed chrome: top bar, depth rail, boot overlay, cursor, fx
+   ========================================================================== */
+
+/* ---- top HUD bar ---- */
+#hud {
+  position: fixed; inset: 0 0 auto 0; z-index: var(--z-hud);
+  pointer-events: none;
+  opacity: 0; transition: opacity var(--dur-l) var(--ease-out);
+}
+body[data-state="active"] #hud { opacity: 1; }
+
+.hud-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  padding: calc(var(--hud-pad) * .7) var(--hud-pad);
+  background: linear-gradient(180deg, rgba(4, 2, 10, .5), transparent);
+}
+.hud-top > * { pointer-events: auto; }
+
+.hud-brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 13px; letter-spacing: .3em;
+  color: var(--ink-hi);
+  white-space: nowrap;
+}
+.hud-logo { width: 16px; height: 16px; color: var(--vio-hot); filter: drop-shadow(0 0 8px var(--glow-vio)); }
+.hud-ver { font-family: var(--font-hud); font-size: 10px; letter-spacing: .2em; color: var(--ink-dim); }
+
+.hud-status {
+  display: flex; align-items: center; gap: 18px;
+  font-variant-numeric: tabular-nums;
+}
+#hud-spark { width: 60px; height: 18px; opacity: .9; }
+
+.hud-controls { display: flex; align-items: center; gap: 10px; }
+
+/* ---- depth rail (right side nav) ---- */
+#rail {
+  position: fixed; right: var(--hud-pad); top: 50%; transform: translateY(-50%);
+  z-index: var(--z-hud);
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+  pointer-events: none;
+  opacity: 0; transition: opacity var(--dur-l) var(--ease-out) .2s;
+}
+body[data-state="active"] #rail { opacity: 1; }
+#rail a {
+  pointer-events: auto;
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0;
+  font-family: var(--font-hud); font-size: 10px; letter-spacing: .22em;
+  color: var(--ink-faint);
+  transition: color var(--dur-s) var(--ease-out);
+}
+#rail a .rail-label { opacity: 0; transform: translateX(6px); transition: opacity var(--dur-s), transform var(--dur-s); }
+#rail a:hover .rail-label, #rail a:focus-visible .rail-label, #rail a.is-here .rail-label { opacity: 1; transform: none; }
+#rail a .rail-dot {
+  width: 5px; height: 5px; border: 1px solid rgba(150, 120, 210, .6); transform: rotate(45deg);
+  transition: background var(--dur-s), border-color var(--dur-s), box-shadow var(--dur-s);
+}
+#rail a:hover, #rail a.is-here { color: var(--ink); }
+#rail a.is-here .rail-dot {
+  background: var(--vio-hot); border-color: var(--vio-hot);
+  box-shadow: 0 0 10px var(--vio-hot);
+}
+#rail-depth {
+  margin-top: 12px;
+  font-size: 10px; letter-spacing: .18em; color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--line); padding-top: 10px;
+}
+
+/* ---- toast ---- */
+#toast {
+  position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%) translateY(20px);
+  z-index: var(--z-fx);
+  padding: 10px 22px;
+  font-family: var(--font-hud); font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--ink-hi);
+  background: rgba(14, 7, 30, .9);
+  border: 1px solid var(--line-hot);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-s) var(--ease-out), transform var(--dur-s) var(--ease-out);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---- fx layer (grain / crt) ---- */
+#fx { position: fixed; inset: 0; z-index: var(--z-fx); pointer-events: none; overflow: hidden; }
+
+/* portal flash when a drone exits through the ceiling */
+#flash {
+  position: fixed; inset: 0; z-index: 18; pointer-events: none; opacity: 0;
+  background: radial-gradient(ellipse at 50% 38%, rgba(240, 230, 255, .85), rgba(138, 92, 255, .32) 42%, transparent 72%);
+}
+
+/* ---- boot overlay ---- */
+#boot {
+  position: fixed; inset: 0; z-index: var(--z-boot);
+  display: grid; place-items: center;
+  /* opaque cover lives on the door halves so the door-split reveal is real */
+  background: transparent;
+  transition: opacity .6s var(--ease-out), visibility .6s;
+}
+body[data-state="active"] #boot { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.boot-frame {
+  position: relative;
+  width: min(520px, 86vw);
+  padding: 34px 34px 30px;
+  border: 1px solid var(--line);
+  background: rgba(8, 4, 18, .55);
+}
+.boot-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  color: var(--ink);
+  padding-bottom: 14px; margin-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.boot-head .bh-title { font-family: var(--font-display); font-weight: 500; letter-spacing: .3em; font-size: 13px; color: var(--ink-hi); }
+#boot-term {
+  height: 196px; overflow: hidden;
+  font-family: var(--font-hud); font-size: 11px; line-height: 1.9; letter-spacing: .08em;
+  color: var(--ink-dim);
+  white-space: pre-wrap;
+}
+#boot-term .ok-tag { color: var(--vio-hot); }
+.boot-actions { margin-top: 22px; display: grid; }
+#boot-init { width: 100%; justify-content: center; }
+#boot-init[disabled] { opacity: .35; pointer-events: none; }
+.boot-foot {
+  margin-top: 18px; display: flex; justify-content: space-between;
+  font-size: 9px; color: var(--ink-faint);
+}
+/* blast doors that split on reveal */
+.boot-doors { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: -1; }
+.bd-l, .bd-r {
+  position: absolute; top: 0; bottom: 0; width: 50.5%;
+  will-change: transform;
+}
+.bd-l {
+  left: 0; border-right: 1px solid rgba(150, 110, 255, .12);
+  background:
+    radial-gradient(ellipse 120% 60% at 100% 30%, rgba(50, 24, 110, .28), transparent 65%),
+    linear-gradient(180deg, #05020c, #090414);
+}
+.bd-r {
+  right: 0; border-left: 1px solid rgba(150, 110, 255, .12);
+  background:
+    radial-gradient(ellipse 120% 60% at 0% 30%, rgba(50, 24, 110, .28), transparent 65%),
+    linear-gradient(180deg, #05020c, #090414);
+}
+/* thin travelling scanline */
+.boot-scanline {
+  position: absolute; left: 0; right: 0; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(180, 122, 255, .8), transparent);
+  box-shadow: 0 0 18px 2px var(--glow-vio);
+  animation: boot-scan 3.4s var(--ease-io) infinite;
+  pointer-events: none;
+}
+@keyframes boot-scan {
+  0% { top: 0; opacity: 0; }
+  8% { opacity: 1; }
+  48% { top: 100%; opacity: 1; }
+  56%, 100% { top: 100%; opacity: 0; }
+}
+
+/* ---- custom scanning cursor (fine pointers only; JS drives position) ---- */
+#cursor { display: none; }
+@media (pointer: fine) {
+  #cursor {
+    display: block;
+    position: fixed; left: 0; top: 0; z-index: var(--z-cursor);
+    pointer-events: none;
+    opacity: 0;
+  }
+  body.cursor-live #cursor { opacity: 1; }
+  body.cursor-live, body.cursor-live * { cursor: none !important; }
+
+  .cur-dot {
+    position: absolute; left: 0; top: 0; width: 4px; height: 4px;
+    margin: -2px 0 0 -2px;
+    background: var(--ink-hi); border-radius: 50%;
+    box-shadow: 0 0 8px rgba(240, 230, 255, .8);
+  }
+  .cur-ring {
+    position: absolute; left: 0; top: 0; width: 34px; height: 34px;
+    margin: -17px 0 0 -17px;
+    border: 1px solid rgba(190, 160, 255, .55);
+    border-radius: 50%;
+    transition: transform .3s var(--ease-out), border-color .3s, border-radius .3s, opacity .3s;
+  }
+  .cur-ring i {
+    position: absolute; width: 7px; height: 7px;
+    border: 0 solid var(--vio-hot);
+    opacity: 0; transition: opacity .25s var(--ease-out);
+  }
+  .cur-ring i.tl { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .cur-ring i.tr { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+  .cur-ring i.bl { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+  .cur-ring i.br { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .cur-tag {
+    position: absolute; left: 22px; top: 14px;
+    font-size: 8px; letter-spacing: .3em; color: var(--vio-hot);
+    opacity: 0; transition: opacity .25s;
+    white-space: nowrap;
+  }
+
+  /* engage state: ring becomes square brackets */
+  body[data-cursor="engage"] .cur-ring { border-radius: 4px; border-color: transparent; transform: scale(1.25); }
+  body[data-cursor="engage"] .cur-ring i { opacity: 1; }
+
+  /* reticle over drones */
+  body[data-cursor="reticle"] .cur-ring {
+    border-radius: 50%; border-color: var(--vio-hot);
+    transform: scale(1.6);
+    animation: reticle-spin 4s linear infinite;
+    border-style: dashed;
+  }
+  body[data-cursor="reticle"] .cur-tag { opacity: 1; }
+
+  /* xray crosshair */
+  body.xray .cur-ring { border-color: rgba(138, 220, 255, .8); }
+
+  @keyframes reticle-spin { to { transform: scale(1.6) rotate(360deg); } }
+}
+
+/* ---- mobile bottom sheet (drone panel on touch) ---- */
+#sheet {
+  position: fixed; left: 10px; right: 10px; bottom: 10px;
+  z-index: var(--z-anchors);
+  transform: translateY(calc(100% + 20px));
+  transition: transform .5s var(--ease-out);
+}
+#sheet.open { transform: none; }
+@media (min-width: 761px) { #sheet { display: none; } }

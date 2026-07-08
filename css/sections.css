@@ -1,0 +1,430 @@
+/* SIGWART_OS // sections — the six floors + holo panels + anchors
+   ========================================================================== */
+
+#world { position: relative; z-index: var(--z-world); }
+
+/* rooms fade in as the OS comes online */
+.room { position: relative; padding: 0 var(--hud-pad); }
+
+/* ---- room headers (AAA-menu editorial) ---- */
+.room-head {
+  display: flex; align-items: center; gap: 18px;
+  padding-top: clamp(70px, 12vh, 130px);
+  margin-bottom: clamp(30px, 6vh, 70px);
+}
+.room-index {
+  font-size: 10px; color: var(--vio-hot);
+  border: 1px solid var(--line-hot); padding: 5px 9px;
+  text-shadow: 0 0 10px var(--glow-vio);
+}
+.room-title { font-size: clamp(17px, 2.6vw, 26px); }
+.room-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-hot), transparent); }
+.room-count { font-size: 10px; color: var(--ink-faint); }
+
+/* ==========================================================================
+   B00 — GATE (hero)
+   ========================================================================== */
+.room-gate {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: 90px; padding-bottom: 40px;
+  overflow: hidden;
+}
+.gate-grid {
+  position: relative;
+  display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(20px, 4vw, 70px);
+  align-items: center;
+  max-width: 1380px; margin: 0 auto; width: 100%;
+}
+.gate-access { color: var(--vio-hot); margin-bottom: 18px; }
+.gate-access::before { content: '// '; color: var(--ink-faint); }
+.gate-titles { min-width: 0; }
+.gate-sub {
+  margin-top: 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.gate-sub .sub-sep { width: 34px; height: 1px; background: var(--line-hot); }
+.gate-meta {
+  margin-top: clamp(28px, 6vh, 60px);
+  display: flex; gap: clamp(18px, 3vw, 44px); flex-wrap: wrap;
+}
+.gate-meta .gm {
+  display: grid; gap: 4px;
+  padding-left: 12px; border-left: 1px solid var(--line);
+}
+.gate-meta .gm b { font-family: var(--font-hud); font-weight: 700; font-size: 13px; color: var(--ink-hi); letter-spacing: .12em; }
+
+.gate-cue {
+  position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: .34em; color: var(--ink-faint);
+}
+.gate-cue .cue-line {
+  width: 1px; height: 44px;
+  background: linear-gradient(180deg, var(--vio-hot), transparent);
+  animation: cue-drop 2.2s var(--ease-io) infinite;
+  transform-origin: top;
+}
+@keyframes cue-drop {
+  0% { transform: scaleY(0); opacity: 0; }
+  35% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1) translateY(24px); opacity: 0; }
+}
+
+/* ---- portrait rig ---- */
+.portrait-rig {
+  perspective: 950px;
+  width: min(400px, 82vw);
+  justify-self: end;
+}
+.portrait-card {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.p-layer { position: absolute; inset: 0; border-radius: 4px; overflow: hidden; }
+.p-glow {
+  inset: -12%;
+  background: radial-gradient(ellipse 60% 55% at 50% 42%, var(--glow-vio), transparent 70%);
+  filter: blur(6px);
+  border-radius: 50%;
+}
+.p-photo, .p-light, .p-eyes {
+  background-size: cover; background-position: center top;
+}
+.p-photo { background-color: #0a0514; }
+/* cursor-following light: masked brightness-boosted duplicate (JS sets --mx/--my) */
+.p-light {
+  opacity: 0;
+  filter: brightness(1.75) saturate(1.15);
+  -webkit-mask-image: radial-gradient(38% 30% at var(--mx, 50%) var(--my, 38%), #000 0%, transparent 100%);
+  mask-image: radial-gradient(38% 30% at var(--mx, 50%) var(--my, 38%), #000 0%, transparent 100%);
+  mix-blend-mode: screen;
+}
+/* head duplicate — soft ellipse mask around the head; JS nudges it toward the
+   cursor so the whole head appears to turn (calibrated by --head-* vars) */
+.p-eyes {
+  opacity: 0;
+  -webkit-mask-image: radial-gradient(ellipse var(--head-rx, 24%) var(--head-ry, 25%) at var(--head-cx, 50%) var(--head-cy, 33%), #000 55%, transparent 80%);
+  mask-image: radial-gradient(ellipse var(--head-rx, 24%) var(--head-ry, 25%) at var(--head-cx, 50%) var(--head-cy, 33%), #000 55%, transparent 80%);
+  transform: scale(1.03);
+  will-change: transform;
+}
+.portrait-card.has-photo .p-light, .portrait-card.has-photo .p-eyes { opacity: 1; }
+.p-frame {
+  border: 1px solid var(--line-hot);
+  transform: translateZ(30px);
+  border-radius: 4px;
+  overflow: visible;
+}
+.p-tag {
+  position: absolute; left: 12px; bottom: 10px;
+  font-size: 9px; color: var(--ink-dim);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .9);
+}
+.p-live {
+  position: absolute; right: 12px; top: 10px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 9px; letter-spacing: .28em; color: var(--vio-hot);
+}
+.p-live .led { width: 5px; height: 5px; border-radius: 50%; background: var(--vio-hot); box-shadow: 0 0 8px var(--vio-hot); animation: pulse-glow 1.6s ease-in-out infinite; }
+
+/* portrait procedural fallback (visible until .has-photo) */
+.p-fallback {
+  position: absolute; inset: 0;
+  display: grid; place-items: center; align-content: center; gap: 18px;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(70, 36, 150, .5), transparent 75%),
+    linear-gradient(180deg, #0b0518, #060310);
+  border-radius: 4px;
+  text-align: center;
+}
+.portrait-card.has-photo .p-fallback { display: none; }
+.p-fallback svg { width: 62%; opacity: .9; }
+.p-fallback .pf-label { font-size: 9px; letter-spacing: .3em; color: var(--ink-dim); }
+.p-fallback .pf-label b { display: block; margin-top: 6px; color: var(--vio-hot); font-weight: 400; }
+
+/* ==========================================================================
+   B01 — OPERATOR (in descent shaft)
+   ========================================================================== */
+.room-operator { padding-bottom: clamp(60px, 10vh, 110px); }
+.operator-grid {
+  display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(22px, 4vw, 60px);
+  max-width: 1180px; margin: 0 auto;
+  align-items: start;
+}
+.id-card { padding: clamp(24px, 3.4vw, 44px); }
+.id-card .idc-head { display: flex; justify-content: space-between; margin-bottom: 26px; }
+.id-name {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(26px, 4vw, 44px); letter-spacing: .1em; line-height: 1.1;
+  color: var(--ink-hi);
+  margin: 8px 0 26px;
+}
+.id-rows { display: grid; gap: 0; }
+.id-rows > div {
+  display: flex; justify-content: space-between; gap: 20px;
+  padding: 11px 2px;
+  border-top: 1px solid var(--line);
+}
+.id-rows dt { color: var(--ink-faint); }
+.id-rows dd { margin: 0; color: var(--ink); letter-spacing: .14em; }
+.id-card .barcode { margin-top: 30px; }
+.id-card .idc-serial { display: flex; justify-content: space-between; margin-top: 8px; font-size: 9px; color: var(--ink-faint); }
+
+/* archive card (photo or schematic fallback) */
+.archive-card { padding: 14px; }
+.ac-window { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: #08040f; }
+.ac-photo { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.04); }
+.loop-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ac-fallback { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(ellipse 65% 50% at 50% 40%, rgba(60, 30, 130, .45), transparent 75%); }
+.ac-fallback svg { width: 58%; }
+.archive-card.has-photo .ac-fallback { display: none; }
+.ac-caption { display: flex; justify-content: space-between; padding: 12px 4px 2px; font-size: 9px; }
+
+/* ==========================================================================
+   B02 — VEHICLE BAY (in descent shaft)
+   ========================================================================== */
+.room-vehicle { padding-bottom: clamp(60px, 10vh, 110px); }
+.veh-pan {
+  position: relative;
+  max-width: 1380px; margin: 0 auto;
+  aspect-ratio: 21 / 9;
+  min-height: 320px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #07030f;
+}
+.veh-img {
+  position: absolute; inset: -6% -4%;
+  background-size: cover; background-position: center;
+  will-change: transform;
+}
+/* slow light sweep */
+.veh-sweep {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgba(190, 140, 255, .12) 50%, transparent 70%);
+  background-size: 300% 100%;
+  animation: veh-sweep 9s var(--ease-io) infinite;
+  mix-blend-mode: screen;
+}
+@keyframes veh-sweep {
+  0%, 20% { background-position: 140% 0; }
+  70%, 100% { background-position: -140% 0; }
+}
+.veh-schematic { position: absolute; inset: 0; width: 100%; height: 100%; }
+.veh-fallback { position: absolute; inset: 0; }
+.veh-pan.has-photo .veh-fallback { display: none; }
+.veh-tags {
+  position: absolute; left: 16px; bottom: 14px;
+  display: flex; gap: 26px; font-size: 9px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .95);
+}
+.veh-note { max-width: 1380px; margin: 14px auto 0; display: flex; justify-content: space-between; font-size: 9px; color: var(--ink-faint); }
+
+/* ==========================================================================
+   B03 — DRONE HANGAR (sticky-pinned WebGL climax)
+   ========================================================================== */
+.room-hangar { height: 240svh; padding: 0; }
+.hangar-pin {
+  position: sticky; top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 0 var(--hud-pad);
+}
+.hangar-pin .room-head { padding-top: clamp(70px, 11vh, 110px); margin-bottom: 0; }
+.hangar-status {
+  margin-top: 14px;
+  color: var(--vio-hot);
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.hangar-status .led { width: 5px; height: 5px; border-radius: 50%; background: var(--vio-hot); box-shadow: 0 0 8px var(--vio-hot); animation: pulse-glow 1.8s infinite; }
+
+/* invisible focusable hit-zones that JS keeps glued over the 3D drones */
+.bay-focus {
+  position: absolute;
+  width: 150px; height: 150px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  opacity: 0;               /* hit-area only; focus ring still visible via outline */
+  pointer-events: auto;
+}
+.bay-focus:focus-visible { opacity: 1; outline: 1px dashed var(--vio-hot); outline-offset: -20px; }
+
+/* secret wall panel trigger (subtle flicker invites the curious) */
+.wall-panel {
+  position: absolute; right: clamp(16px, 4vw, 60px); bottom: clamp(90px, 16vh, 160px);
+  width: 46px; height: 68px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(30, 16, 62, .35), rgba(12, 6, 26, .5));
+  cursor: pointer;
+  animation: panel-flicker 7s steps(1) infinite;
+}
+.wall-panel::after {
+  content: ''; position: absolute; inset: 8px;
+  border: 1px dashed rgba(160, 120, 255, .18);
+}
+@keyframes panel-flicker {
+  0%, 92%, 96%, 100% { border-color: var(--line); }
+  93%, 95% { border-color: var(--line-hot); box-shadow: 0 0 18px -6px var(--glow-vio); }
+}
+
+/* ==========================================================================
+   B04 — HOLO CHAMBER (sticky-pinned hologram)
+   ========================================================================== */
+.room-holo { height: 250svh; padding: 0; }
+.holo-pin {
+  position: sticky; top: 0; height: 100svh;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 0 var(--hud-pad);
+}
+.holo-pin .room-head { padding-top: clamp(70px, 11vh, 110px); margin-bottom: 0; }
+.holo-stage {
+  flex: 1;
+  position: relative;
+  display: grid; place-items: end center;
+  padding-bottom: clamp(30px, 7vh, 80px);
+  touch-action: pan-y;             /* horizontal drags rotate the hologram */
+}
+.holo-ped {
+  width: min(300px, 60vw); height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(138, 92, 255, .32), transparent 68%);
+  filter: blur(2px);
+  position: relative;
+}
+.holo-ped::before {
+  content: ''; position: absolute; inset: 22px 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(180, 140, 255, .35);
+}
+.holo-hint {
+  position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+  font-size: 9px; color: var(--ink-faint); white-space: nowrap;
+}
+
+/* ==========================================================================
+   B05 — TRANSMISSION (comms + secret wall + footer)
+   ========================================================================== */
+.room-comms {
+  min-height: 100svh;
+  display: flex; flex-direction: column;
+  padding-bottom: 30px;
+}
+.comms-eol { color: var(--vio-hot); margin-bottom: clamp(26px, 5vh, 50px); }
+.comms-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  max-width: 1180px; width: 100%; margin: 0 auto;
+}
+.comms-card {
+  display: grid; gap: 10px;
+  padding: 26px 24px 22px;
+  transition: border-color var(--dur-s) var(--ease-out);
+}
+.comms-card:hover { border-color: var(--line-hot); }
+.cc-callsign { font-size: 9px; color: var(--ink-faint); }
+.cc-name {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: clamp(15px, 1.8vw, 20px); letter-spacing: .22em;
+  color: var(--ink-hi);
+}
+.cc-row { display: flex; justify-content: space-between; align-items: center; }
+.cc-arrow { color: var(--vio-hot); font-family: var(--font-hud); transition: transform var(--dur-s) var(--ease-out); }
+.comms-card:hover .cc-arrow { transform: translate(4px, -4px); }
+
+.comms-mid {
+  flex: 1; display: grid; place-items: center;
+  padding: clamp(40px, 9vh, 90px) 0;
+}
+.site-foot {
+  display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 9px; color: var(--ink-faint);
+}
+
+/* ==========================================================================
+   Projected holo info panels (#anchors) + bottom sheet content
+   ========================================================================== */
+#anchors {
+  position: fixed; inset: 0; z-index: var(--z-anchors);
+  pointer-events: none;
+  overflow: hidden;
+}
+.holo-panel {
+  position: absolute; left: 0; top: 0;
+  width: 240px;
+  padding: 16px 16px 14px;
+  opacity: 0;
+  transform-origin: left center;
+  pointer-events: none;                 /* enabled when .live */
+}
+.holo-panel.live { pointer-events: auto; }
+.hp-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.hp-callsign { font-size: 9px; color: var(--ink-faint); }
+.hp-name {
+  font-family: var(--font-display); font-weight: 500; font-size: 15px;
+  letter-spacing: .2em; color: var(--ink-hi);
+}
+.hp-name:hover { color: var(--vio-hot); }
+.hp-rows { display: grid; gap: 5px; font-size: 9px; margin-bottom: 14px; }
+.hp-rows > div { display: flex; justify-content: space-between; }
+.hp-rows .val { color: var(--ink); }
+.hp-launch {
+  display: flex; justify-content: center; align-items: center; gap: 10px;
+  padding: 11px 10px;
+  border: 1px solid var(--line-hot);
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 10px; letter-spacing: .32em; text-indent: .32em; text-transform: uppercase;
+  color: var(--ink-hi);
+  transition: background var(--dur-s), box-shadow var(--dur-s);
+}
+.hp-launch:hover, .hp-launch:focus-visible {
+  background: rgba(138, 92, 255, .16);
+  box-shadow: 0 0 22px -6px var(--glow-vio);
+}
+.holo-panel.blocked .hp-launch { animation: pulse-glow 1.2s ease-in-out infinite; border-color: var(--vio-hot); }
+/* connector stem from drone to panel */
+.hp-stem {
+  position: absolute; left: -34px; top: 50%; width: 34px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-hot));
+}
+.hp-stem::before {
+  content: ''; position: absolute; left: -3px; top: -3px; width: 5px; height: 5px;
+  border: 1px solid var(--vio-hot); transform: rotate(45deg);
+}
+
+/* bottom sheet reuses holo-panel guts */
+#sheet .holo-panel {
+  position: static; width: 100%; opacity: 1; transform: none; pointer-events: auto;
+}
+#sheet .hp-stem { display: none; }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 1020px) {
+  .gate-grid { grid-template-columns: 1fr; gap: 40px; }
+  .chrome-title { font-size: clamp(44px, 12.5vw, 120px); }
+  .portrait-rig { justify-self: center; }
+  .operator-grid { grid-template-columns: 1fr; }
+  .veh-pan { aspect-ratio: 16 / 10; }
+}
+@media (max-width: 760px) {
+  :root { --hud-pad: 16px; }
+  .hud-status { display: none; }
+  .gate-cue { position: static; transform: none; margin: 30px auto 0; }
+  #rail { right: 8px; }
+  #rail a .rail-label { display: none; }
+  #rail-depth { display: none; }
+  .comms-cards { grid-template-columns: 1fr; }
+  .room-operator { min-height: 0; padding-bottom: 60px; }
+  .room-vehicle { min-height: 0; padding-bottom: 60px; }
+  .veh-pan { aspect-ratio: 4 / 5; }
+  .veh-img { inset: -8% -18%; }
+  .chrome-title { white-space: normal; word-break: break-word; }
+  .wall-panel { right: 12px; bottom: 120px; width: 38px; height: 56px; }
+}

@@ -77,7 +77,7 @@ html {
   background: var(--bg-0);
   color-scheme: dark;
   -webkit-text-size-adjust: 100%;
-  scrollbar-color: #3d2a6e var(--bg-0);
+  scrollbar-color: #8a5cff #08040f;
   scrollbar-width: thin;
 }
 body {
@@ -90,10 +90,21 @@ body {
   min-height: 100svh;
   overscroll-behavior-y: none;
 }
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-0); }
-::-webkit-scrollbar-thumb { background: #2c1e52; border-radius: 4px; border: 2px solid var(--bg-0); }
-::-webkit-scrollbar-thumb:hover { background: #4a3485; }
+/* energy-conduit scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #060310, #0b0518 50%, #060310);
+  border-left: 1px solid rgba(180, 150, 255, .10);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d24bff, #8a5cff 45%, #6a5cff 80%, #b47aff);
+  border-radius: 6px;
+  border: 2px solid #05020a;
+  box-shadow: 0 0 14px rgba(138, 92, 255, .75), inset 0 0 5px rgba(255, 255, 255, .35);
+}
+::-webkit-scrollbar-thumb:hover {
+  box-shadow: 0 0 22px rgba(190, 140, 255, 1), inset 0 0 7px rgba(255, 255, 255, .55);
+}
 ::selection { background: rgba(138, 92, 255, .45); color: var(--ink-hi); }
 
 img, svg, canvas, video { display: block; max-width: 100%; }

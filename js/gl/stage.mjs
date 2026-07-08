@@ -142,7 +142,8 @@ function applyTier() {
   const dpr = dprForTier();
   renderer.setPixelRatio(dpr);
   composer.setPixelRatio(dpr);
-  bloomPass.strength = state.xray ? baseBloomStrength() + 0.22 : baseBloomStrength();
+  bloomPass.strength = baseBloomStrength();
+  glState.bloomBase = bloomPass.strength;
   bloomPass.resolution.set(state.tier >= 2 ? 1280 : 256, state.tier >= 2 ? 720 : 144);
   glState.bypassComposer = state.tier <= 0;
   grainPass.enabled = state.tier > 0;
@@ -162,6 +163,7 @@ function governorStep() {
   } else if (r === 3) {
     bloomPass.resolution.set(256, 144);
     bloomPass.strength = 0.4;
+    glState.bloomBase = 0.4;
   } else if (r >= 4) {
     import('../capabilities.mjs').then(m => m.setTier(0));
   }
@@ -238,6 +240,10 @@ function render(dt, t) {
   if (state.phase === 'boot-idle') return;   // opaque doors cover everything
   glState.clock = t;
   grainPass.uniforms.uTime.value = t;
+  // the whole facility breathes at 128 BPM — Jeff's tempo
+  if (state.motionOK && glState.bloomBase) {
+    bloomPass.strength = glState.bloomBase + Math.sin(t * 13.404) * 0.035;
+  }
   const t0 = performance.now();
   if (glState.bypassComposer) {
     renderer.render(scene, camera);

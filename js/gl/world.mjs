@@ -27,6 +27,7 @@ export const world = {
   secretWall: null,
   cones: [],
   blobs: [],
+  neurons: [],
   setPadLit: null,
 };
 
@@ -132,6 +133,7 @@ function makeCone(radius, height, color, intensity, seed) {
 }
 
 const _mv = new THREE.Vector3();
+const _sp = new THREE.Vector3();
 
 export function tickWorld(dt, t) {
   for (let i = 0; i < coneUniformsList.length; i++) coneUniformsList[i].uTime.value = t;
@@ -154,20 +156,50 @@ export function tickWorld(dt, t) {
     b.group.rotation.x = Math.sin(t * 0.16 + i * 3) * 0.08;
     b.group.scale.setScalar(b.radius * (1 + vel * 0.11));
 
-    // cursor ray → membrane-local point: the liquid reaches toward the cursor
+    // cursor ray → membrane-local point, chased by an underdamped spring:
+    // the reach point overshoots and jiggles — slime, not servo
     _mv.set(world.pmx || 0, world.pmy || 0, 0.5).unproject(camera);
     _mv.sub(camera.position).normalize();
+    world.rayO = world.rayO || new THREE.Vector3();
+    world.rayD = world.rayD || new THREE.Vector3();
+    if (i === 0) { world.rayO.copy(camera.position); world.rayD.copy(_mv); }
     const dz = Math.abs(_mv.z) < 1e-4 ? -1e-4 : _mv.z;
     const tt = (b.group.position.z - camera.position.z) / dz;
     if (tt > 0) {
       _mv.multiplyScalar(tt).add(camera.position);
       b.membrane.worldToLocal(_mv);
       const L = _mv.length();
-      if (L > 2.2) _mv.multiplyScalar(2.2 / L);
-      u.mem.uMouse.value.lerp(_mv, 0.3);                          // snappier, more liquid chase
-      u.line.uMouse.value.copy(u.mem.uMouse.value);
-      u.pts.uMouse.value.copy(u.mem.uMouse.value);
-      u.ring.uMouse.value.copy(u.mem.uMouse.value);
+      if (L > 6) _mv.multiplyScalar(6 / L);
+      b.mp = b.mp || new THREE.Vector3(9, 9, 9);
+      b.mvv = b.mvv || new THREE.Vector3();
+      _sp.copy(_mv).sub(b.mp).multiplyScalar(26 * dt);
+      b.mvv.add(_sp).multiplyScalar(Math.exp(-5.0 * dt));
+      b.mp.addScaledVector(b.mvv, dt);
+      u.mem.uMouse.value.copy(b.mp);
+      u.line.uMouse.value.copy(b.mp);
+      u.pts.uMouse.value.copy(b.mp);
+      u.ring.uMouse.value.copy(b.mp);
+    }
+  }
+
+  // free-floating neuron fields (hangar corridor) — pulse, spin, lean to the cursor
+  for (let i = 0; i < world.neurons.length; i++) {
+    const nf = world.neurons[i];
+    nf.uniforms.line.uTime.value = t;
+    nf.uniforms.pts.uTime.value = t;
+    nf.group.rotation.y = t * 0.09 + (state.scrollP || 0) * 3.0;
+    nf.group.rotation.z = damp(nf.group.rotation.z, (world.pmx || 0) * 0.2, 3, dt);
+    _mv.set(world.pmx || 0, world.pmy || 0, 0.5).unproject(camera);
+    _mv.sub(camera.position).normalize();
+    const dzn = Math.abs(_mv.z) < 1e-4 ? -1e-4 : _mv.z;
+    const tn = (nf.group.position.z - camera.position.z) / dzn;
+    if (tn > 0) {
+      _mv.multiplyScalar(tn).add(camera.position);
+      nf.group.worldToLocal(_mv);
+      const L = _mv.length();
+      if (L > 4) _mv.multiplyScalar(4 / L);
+      nf.uniforms.line.uMouse.value.lerp(_mv, 0.2);
+      nf.uniforms.pts.uMouse.value.copy(nf.uniforms.line.uMouse.value);
     }
   }
 }
@@ -597,11 +629,18 @@ function makeNeuralCore(g, x, y, z, radius, spin) {
                  + snoise(p * 2.4 - vec3(t * 0.15)) * 0.28
                  + snoise(p * 4.8 + vec3(t * 0.08)) * 0.12;
         float md = distance(p, uMouse);
-        float reach = exp(-md * md * 1.15);
-        reach *= 0.62 + 0.58 * snoise(p * 3.2 + vec3(t * 0.5));   // venom fingers, not one smooth bulge
+        float closeReach = exp(-md * md * 0.9) * 0.5;
+        // long-range slime pull: the whole cursor-facing side strains toward the
+        // pointer no matter how far it is — the further, the longer the tendril
+        float mLen = length(uMouse);
+        vec3 mDir = uMouse / max(mLen, 1e-4);
+        float align = max(dot(normalize(p), mDir), 0.0);
+        float farPull = pow(align, 7.0) * clamp(mLen - 0.6, 0.0, 2.6) * 0.55;
+        float fingers = 0.62 + 0.58 * snoise(p * 3.2 + vec3(t * 0.5));
+        float reach = (closeReach + farPull) * fingers;
         vec3 toM = normalize(uMouse - p + vec3(1e-4));
         float rip = sin(md * 9.0 - t * 6.0) * exp(-md * 1.4) * uStir;
-        vec3 pos = p * breath + n * (nz * 0.34 + rip * 0.16) + toM * reach * 0.46;
+        vec3 pos = p * breath + n * (nz * 0.34 + rip * 0.16) + toM * reach;
         float e = 0.14;
         float gx = snoise((p + vec3(e, 0.0, 0.0)) * 1.1 + off) - n0;
         float gy = snoise((p + vec3(0.0, e, 0.0)) * 1.1 + off) - n0;
@@ -826,7 +865,7 @@ function makeNeuralCore(g, x, y, z, radius, spin) {
 
 function mountEnergyBlobs(g) {
   makeNeuralCore(g, 0.5, 4.9, -6.3, 3.1, 0);                          // hero — the organism
-  makeNeuralCore(g, 0, ROOMS.hangar.floorY + 3.6, -17.5, 2.0, 4.8);   // hangar reactor behind the blast doors
+  makeNeuronField(g, 0, ROOMS.hangar.floorY + 3.8, -17.5, 3.4, 150);  // naked synapse cloud behind the blast doors
   makeNeuralCore(g, 0, ROOMS.comms.floorY + 5.3, -6.2, 2.2, 2.4);     // comms finale
 
   window.addEventListener('pointermove', e => {
@@ -836,4 +875,115 @@ function mountEnergyBlobs(g) {
     world.pmx = nx;
     world.pmy = ny;
   }, { passive: true });
+}
+
+/* ---------- naked synapse cloud (no membrane) — hangar corridor + anywhere airy ---------- */
+function makeNeuronField(g, x, y, z, radius, count) {
+  const group = new THREE.Group();
+  group.position.set(x, y, z);
+  group.scale.setScalar(radius);
+
+  const pts = [];
+  for (let i = 0; i < count; i++) {
+    const u2 = Math.random() * Math.PI * 2;
+    const v2 = Math.acos(2 * Math.random() - 1);
+    const r = 0.25 + Math.pow(Math.random(), 0.5) * 0.75;
+    pts.push(new THREE.Vector3(
+      Math.sin(v2) * Math.cos(u2) * r,
+      Math.cos(v2) * r * 0.7,
+      Math.sin(v2) * Math.sin(u2) * r * 0.85
+    ));
+  }
+  const ePos = [], eT = [], ePh = [];
+  for (let i = 0; i < count; i++) {
+    const near = pts.map((p, j) => ({ j, dd: i === j ? 1e9 : pts[i].distanceToSquared(p) }))
+      .sort((a, b) => a.dd - b.dd);
+    for (let k = 0; k < 2; k++) {
+      const q = pts[near[k].j];
+      const ph = Math.random();
+      ePos.push(pts[i].x, pts[i].y, pts[i].z, q.x, q.y, q.z);
+      eT.push(0, 1);
+      ePh.push(ph, ph);
+    }
+  }
+  const lineGeo = new THREE.BufferGeometry();
+  lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(ePos), 3));
+  lineGeo.setAttribute('aT', new THREE.BufferAttribute(new Float32Array(eT), 1));
+  lineGeo.setAttribute('aPhase', new THREE.BufferAttribute(new Float32Array(ePh), 1));
+  const lineUniforms = { uTime: { value: 0 }, uMouse: { value: new THREE.Vector3(9, 9, 9) } };
+  const lineMat = new THREE.ShaderMaterial({
+    uniforms: lineUniforms,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexShader: `
+      attribute float aT;
+      attribute float aPhase;
+      uniform vec3 uMouse;
+      varying float vT;
+      varying float vPh;
+      varying float vM;
+      void main() {
+        vT = aT;
+        vPh = aPhase;
+        vM = exp(-distance(position, uMouse) * 1.2);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader: `
+      uniform float uTime;
+      varying float vT;
+      varying float vPh;
+      varying float vM;
+      void main() {
+        float trip = fract(uTime * 0.5 + vPh);
+        float s = exp(-abs(vT - trip) * 5.0);
+        vec3 col = vec3(0.4, 0.26, 0.85) * 0.45 + s * vec3(1.25, 0.9, 1.65) + vM * vec3(0.9, 0.7, 1.3) * 0.7;
+        gl_FragColor = vec4(col, 0.22 + s * 0.62 + vM * 0.35);
+      }`,
+  });
+  group.add(new THREE.LineSegments(lineGeo, lineMat));
+
+  const nPos = new Float32Array(count * 3);
+  const nSeed = new Float32Array(count);
+  pts.forEach((p, i) => { nPos[i * 3] = p.x; nPos[i * 3 + 1] = p.y; nPos[i * 3 + 2] = p.z; nSeed[i] = Math.random() * 10; });
+  const ptGeo = new THREE.BufferGeometry();
+  ptGeo.setAttribute('position', new THREE.BufferAttribute(nPos, 3));
+  ptGeo.setAttribute('aSeed', new THREE.BufferAttribute(nSeed, 1));
+  const ptUniforms = {
+    uTime: { value: 0 },
+    uMouse: { value: new THREE.Vector3(9, 9, 9) },
+    uPix: { value: Math.min(window.devicePixelRatio || 1, 2) },
+  };
+  const ptMat = new THREE.ShaderMaterial({
+    uniforms: ptUniforms,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexShader: `
+      attribute float aSeed;
+      uniform float uTime;
+      uniform float uPix;
+      uniform vec3 uMouse;
+      varying float vPulse;
+      varying float vM;
+      void main() {
+        vM = exp(-distance(position, uMouse) * 1.4);
+        vPulse = 0.55 + 0.45 * sin(uTime * 1.8 + aSeed * 9.0);
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = clamp(uPix * (40.0 / -mv.z) * (0.7 + vPulse * 0.5 + vM), 1.0, 9.0);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      varying float vPulse;
+      varying float vM;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        float a = smoothstep(0.5, 0.1, d) * (0.45 + vPulse * 0.5 + vM * 0.7);
+        gl_FragColor = vec4(vec3(0.85, 0.7, 1.2) + vM * 0.5, a);
+      }`,
+  });
+  group.add(new THREE.Points(ptGeo, ptMat));
+
+  g.add(group);
+  world.neurons.push({ group, uniforms: { line: lineUniforms, pts: ptUniforms } });
 }

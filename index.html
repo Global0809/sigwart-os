@@ -18,10 +18,10 @@
 <link rel="preload" href="lib/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="lib/fonts/jetbrains-mono-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/effects.css">
-<link rel="stylesheet" href="css/hud.css">
-<link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/base.css?v=7">
+<link rel="stylesheet" href="css/effects.css?v=7">
+<link rel="stylesheet" href="css/hud.css?v=7">
+<link rel="stylesheet" href="css/sections.css?v=7">
 
 <script src="lib/gsap/gsap.min.js" defer></script>
 <script src="lib/gsap/ScrollTrigger.min.js" defer></script>
@@ -31,7 +31,7 @@
 <script type="importmap">
 { "imports": { "three": "./lib/three/three.module.min.js", "three/addons/": "./lib/three/addons/" } }
 </script>
-<script type="module" src="js/main.mjs"></script>
+<script type="module" src="js/main.mjs?v=7"></script>
 <noscript>
 <style>#boot, #cursor, #gl { display: none !important; } body { overflow: auto !important; } #hud, #rail { opacity: 1 !important; }</style>
 </noscript>
@@ -80,7 +80,7 @@
     <div class="gate-grid">
       <div class="gate-titles">
         <p class="gate-access hud-label">ACCESS GRANTED</p>
-        <h1 class="chrome-title" data-text="SIGWART">SIGWART</h1>
+        <h1 class="chrome-title">SIGWART</h1>
         <div class="gate-sub hud-label">
           <span>UNDERGROUND</span><span class="sub-sep"></span><span>HEADQUARTERS</span>
         </div>

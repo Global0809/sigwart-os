@@ -97,6 +97,7 @@ function initTitle() {
     s.textContent = ch;
     s.setAttribute('aria-hidden', 'true');
     s.dataset.word = TITLE_WORDS[ch] || '';
+    s.style.animationDelay = (i * 0.28) + 's';   // liquid metal ripples across the word
     title.appendChild(s);
     letters.push(s);
     s.addEventListener('pointerenter', () => {
@@ -107,13 +108,6 @@ function initTitle() {
       if (window.gsap) window.gsap.to(s, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
     });
   });
-  // idle breathing — letters float on a slow stagger so the word never sits dead
-  if (window.gsap && state.motionOK) {
-    window.gsap.to(letters, {
-      y: -4, duration: 2.4, ease: 'sine.inOut',
-      yoyo: true, repeat: -1, stagger: { each: 0.28, yoyo: true },
-    });
-  }
   title.addEventListener('pointerenter', () => title.classList.add('lit'));
   title.addEventListener('pointerleave', () => title.classList.remove('lit'));
 }

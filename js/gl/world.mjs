@@ -169,7 +169,7 @@ export function tickWorld(dt, t) {
       _mv.multiplyScalar(tt).add(camera.position);
       b.membrane.worldToLocal(_mv);
       const L = _mv.length();
-      if (L > 10) _mv.multiplyScalar(10 / L);
+      if (L > 5) _mv.multiplyScalar(5 / L);
       b.mp = b.mp || new THREE.Vector3(9, 9, 9);
       b.mvv = b.mvv || new THREE.Vector3();
       _sp.copy(_mv).sub(b.mp).multiplyScalar(26 * dt);
@@ -637,7 +637,7 @@ function makeNeuralCore(g, x, y, z, radius, spin) {
         float align = max(dot(normalize(p), mDir), 0.0);
         // ALWAYS touching: the tendril tip extends the full distance to the cursor,
         // a narrow spike riding on a wide organic swell
-        float stretchLen = max(mLen - 0.95, 0.0);
+        float stretchLen = min(max(mLen - 0.95, 0.0), 3.2);
         float tip = pow(align, 12.0);
         float baseSwell = pow(align, 3.0) * 0.22;
         float fingers = 0.62 + 0.58 * snoise(p * 3.2 + vec3(t * 0.5));

@@ -26,15 +26,24 @@
   cursor: pointer;
   will-change: transform;
   /* split letters must carry their own chrome — a parent's background-clip:text
-     does not paint through child spans */
+     does not paint through child spans. the liquid metal flows INSIDE the
+     glyphs (animated gradient position), no geometry ever moves. */
   background: linear-gradient(180deg,
-    #ffffff 0%, #f0ecfb 16%, #c6bfe0 32%, #857BA8 45%,
-    #2c2350 51%, #6a5f95 56%, #d9d2f0 68%, #f8f6ff 76%,
-    #9c8fc9 88%, #453a6e 100%);
+    #ffffff 0%, #f0ecfb 12%, #c6bfe0 26%, #857BA8 38%,
+    #2c2350 46%, #6a5f95 52%, #d9d2f0 62%, #f8f6ff 70%,
+    #9c8fc9 82%, #453a6e 92%, #f0ecfb 100%);
+  background-size: 100% 260%;
+  background-position: 50% 0%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: chrome-flow 6.5s ease-in-out infinite;
 }
+@keyframes chrome-flow {
+  0%, 100% { background-position: 50% 0%; }
+  50% { background-position: 50% 72%; }
+}
+body.motion-off .chrome-title .ct-l { animation: none; }
 /* each initial reveals its meaning in a sleek HUD chip */
 .chrome-title .ct-l::after {
   content: attr(data-word);
@@ -56,24 +65,8 @@
   filter: drop-shadow(0 2px 34px rgba(160, 110, 255, .5)) drop-shadow(0 0 4px rgba(255, 255, 255, .3)) brightness(1.07);
 }
 
-/* moving sheen */
-.chrome-title::after {
-  content: attr(data-text);
-  position: absolute; inset: 0;
-  background: linear-gradient(115deg,
-    transparent 42%, rgba(255, 255, 255, .85) 50%, transparent 58%);
-  background-size: 260% 100%;
-  background-position: 130% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: sheen 7s var(--ease-io) infinite;
-  pointer-events: none;
-}
-@keyframes sheen {
-  0%, 55% { background-position: 130% 0; }
-  75%, 100% { background-position: -130% 0; }
-}
+/* (the old full-word sheen overlay is gone — a static ghost word over
+   animated letters was the source of the glitchy look) */
 
 /* lighter gradient treatment for section titles */
 .title-grad {

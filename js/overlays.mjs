@@ -261,10 +261,8 @@ function initPortraitRig(card) {
   if (state.fine && state.motionOK && window.gsap) {
     const rx = window.gsap.quickTo(card, 'rotationX', { duration: 0.65, ease: 'power3.out' });
     const ry = window.gsap.quickTo(card, 'rotationY', { duration: 0.65, ease: 'power3.out' });
-    const ex = window.gsap.quickTo(eyes, 'x', { duration: 0.38, ease: 'power2.out' });
-    const ey = window.gsap.quickTo(eyes, 'y', { duration: 0.38, ease: 'power2.out' });
-    const ery = window.gsap.quickTo(eyes, 'rotationY', { duration: 0.42, ease: 'power2.out' });
-    const erz = window.gsap.quickTo(eyes, 'rotationZ', { duration: 0.5, ease: 'power2.out' });
+    const ex = window.gsap.quickTo(eyes, 'x', { duration: 0.5, ease: 'power2.out' });
+    const ey = window.gsap.quickTo(eyes, 'y', { duration: 0.5, ease: 'power2.out' });
     window.addEventListener('pointermove', (e) => {
       const r = rig.getBoundingClientRect();
       if (r.bottom < 0 || r.top > window.innerHeight) return;
@@ -273,11 +271,8 @@ function initPortraitRig(card) {
       const ny = clamp((e.clientY - cy) / (window.innerHeight * 0.5), -1, 1);
       ry(nx * 8);
       rx(-ny * 6);
-      // the head TURNS, faster than the card — it leads, the body follows
-      ex(nx * 9);
-      ey(ny * 4.5);
-      ery(nx * 11);
-      erz(nx * 2.4);
+      ex(nx * 6.5);   // head leans toward the cursor
+      ey(ny * 3.5);
       card.style.setProperty('--mx', (50 + nx * 32) + '%');
       card.style.setProperty('--my', (38 + ny * 22) + '%');
     }, { passive: true });

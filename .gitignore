@@ -12,3 +12,13 @@ Cyber/
 
 # uncompressed photo backups (kept locally only)
 assets/photos/originals/
+
+# other projects sharing this workspace folder
+vivaha/
+voxel-vows/
+
+# loose fonts belonging to other projects
+cinzel-*.woff2
+cormorant-*.woff2
+devanagari-*.woff2
+greatvibes-*.woff2

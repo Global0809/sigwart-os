@@ -6,3 +6,9 @@ _deploy/
 
 # local machine-specific Claude Code settings
 .claude/settings.local.json
+
+# unrelated project (lives in this workspace, not part of SIGWART_OS)
+Cyber/
+
+# uncompressed photo backups (kept locally only)
+assets/photos/originals/

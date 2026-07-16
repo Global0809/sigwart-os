@@ -6,6 +6,36 @@
       "runtimeExecutable": "powershell",
       "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "serve.ps1"],
       "port": 4173
+    },
+    {
+      "name": "freight-deck",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\Users\\prana\\AppData\\Local\\Temp\\claude\\C--Claude\\c7e8448b-3447-4aa1-bc66-0e2603068366\\scratchpad\\app\\server.js"],
+      "port": 8317
+    },
+    {
+      "name": "sunset-world",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:\\Projects\\sunset-world", "run", "dev", "--", "--port", "5173", "--strictPort"],
+      "port": 5173
+    },
+    {
+      "name": "sunset-world-built",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:\\Projects\\sunset-world", "run", "preview:single", "--", "--port", "4174", "--strictPort"],
+      "port": 4174
+    },
+    {
+      "name": "aikya",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\Projects\\aikya\\serve.js"],
+      "port": 4321
+    },
+    {
+      "name": "freight-deck-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:\\Users\\prana\\AppData\\Local\\Temp\\claude\\C--Claude\\c7e8448b-3447-4aa1-bc66-0e2603068366\\scratchpad\\prod\\src\\freight-deck-prod", "run", "dev", "--", "--port", "5199", "--strictPort"],
+      "port": 5199
     }
   ]
 }

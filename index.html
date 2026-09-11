@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="css/effects.css?v=7">
 <link rel="stylesheet" href="css/hud.css?v=7">
 <link rel="stylesheet" href="css/sections.css?v=7">
-<link rel="stylesheet" href="css/biography.css?v=1">
+<link rel="stylesheet" href="css/biography.css?v=2">
 
 <script src="lib/gsap/gsap.min.js" defer></script>
 <script src="lib/gsap/ScrollTrigger.min.js" defer></script>
@@ -33,6 +33,7 @@
 { "imports": { "three": "./lib/three/three.module.min.js", "three/addons/": "./lib/three/addons/" } }
 </script>
 <script type="module" src="js/main.mjs?v=7"></script>
+<script type="module" src="js/biography.mjs?v=2"></script>
 <noscript>
 <style>#boot, #cursor, #gl { display: none !important; } body { overflow: auto !important; } #hud, #rail { opacity: 1 !important; }</style>
 </noscript>
@@ -178,9 +179,9 @@
       </div>
 
       <dl class="bio-metrics" aria-label="Career highlights" data-reveal>
-        <div><dt>ORLANDO RESIDENCIES</dt><dd>22<span>YRS</span></dd></div>
-        <div><dt>ORIGINAL TRACKS IN ONE YEAR</dt><dd>50<span>+</span></dd></div>
-        <div><dt>RELEASE PLATFORMS</dt><dd>20<span>+</span></dd></div>
+        <div><dt>ORLANDO RESIDENCIES</dt><dd aria-label="22 years"><b class="bio-value" data-value="22" aria-hidden="true">22</b><span aria-hidden="true">YRS</span></dd></div>
+        <div><dt>ORIGINAL TRACKS IN ONE YEAR</dt><dd aria-label="50 plus"><b class="bio-value" data-value="50" aria-hidden="true">50</b><span aria-hidden="true">+</span></dd></div>
+        <div><dt>RELEASE PLATFORMS</dt><dd aria-label="20 plus"><b class="bio-value" data-value="20" aria-hidden="true">20</b><span aria-hidden="true">+</span></dd></div>
       </dl>
 
       <ol class="bio-record" aria-label="Artist journey">

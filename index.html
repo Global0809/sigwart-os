@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SIGWART_OS // UNDERGROUND HEADQUARTERS</title>
-<meta name="description" content="Enter DJ Jeff Sigwart's futuristic underground headquarters. Boot the OS, descend the facility, launch the drones.">
+<meta name="description" content="Enter the underground headquarters of OSB — DJ Jeff Sigwart. Florida vinyl roots, Denver festival stages, and a lifetime in electronic music.">
 <meta name="theme-color" content="#050208">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="SIGWART_OS // UNDERGROUND HEADQUARTERS">
@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="css/effects.css?v=7">
 <link rel="stylesheet" href="css/hud.css?v=7">
 <link rel="stylesheet" href="css/sections.css?v=7">
+<link rel="stylesheet" href="css/biography.css?v=1">
 
 <script src="lib/gsap/gsap.min.js" defer></script>
 <script src="lib/gsap/ScrollTrigger.min.js" defer></script>
@@ -63,7 +64,7 @@
 
 <nav id="rail" aria-label="Facility levels">
   <a href="#gate" data-floor="gate"><span class="rail-label hud-label">GATE</span><span class="rail-dot"></span></a>
-  <a href="#operator" data-floor="operator"><span class="rail-label hud-label">OPERATOR</span><span class="rail-dot"></span></a>
+  <a href="#operator" data-floor="operator" aria-label="Operator — artist biography"><span class="rail-label hud-label">OPERATOR</span><span class="rail-dot"></span></a>
   <a href="#vehicle" data-floor="vehicle"><span class="rail-label hud-label">VEHICLE</span><span class="rail-dot"></span></a>
   <a href="#hangar" data-floor="hangar"><span class="rail-label hud-label">HANGAR</span><span class="rail-dot"></span></a>
   <a href="#comms" data-floor="comms"><span class="rail-label hud-label">COMMS</span><span class="rail-dot"></span></a>
@@ -134,15 +135,16 @@
       <span class="room-count hud-label">01 / 04</span>
     </header>
     <div class="operator-grid">
-      <article class="glass id-card" data-gravity data-reveal>
+      <article class="glass id-card artist-id" data-reveal>
         <div class="ticks" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></div>
-        <div class="idc-head hud-label"><span>IDENTITY MODULE</span><span class="ok">VERIFIED</span></div>
+        <div class="idc-head hud-label"><span>ARTIST DOSSIER</span><span class="ok">OSB</span></div>
         <h3 class="id-name">JEFF<br>SIGWART</h3>
+        <p class="artist-disciplines">DJ <span> / </span> PRODUCER <span> / </span> VOCALIST<br>ENGINEER <span> / </span> PIANIST</p>
+        <p class="artist-intro">Florida-born. Denver-based. A lifetime behind the decks, built on vinyl craft and a sound that keeps moving forward.</p>
         <dl class="id-rows hud-label">
-          <div><dt>UNIT</dt><dd>OSB.DJ.50</dd></div>
-          <div><dt>ROLE</dt><dd>AUDIO OPERATIONS</dd></div>
-          <div><dt>STATUS</dt><dd class="ok">ACTIVE</dd></div>
-          <div><dt>CLEARANCE</dt><dd>LEVEL 05</dd></div>
+          <div><dt>ORIGIN</dt><dd>FLORIDA, USA</dd></div>
+          <div><dt>BASE</dt><dd>DENVER, COLORADO</dd></div>
+          <div><dt>LABEL</dt><dd>MONDO MUSIC</dd></div>
         </dl>
         <div class="barcode" aria-hidden="true"></div>
         <div class="idc-serial hud-label"><span>SN 2000-OSB-50</span><span>DS-2026</span></div>
@@ -162,9 +164,60 @@
           </div>
           <div class="scanlines" aria-hidden="true"></div>
         </div>
-        <figcaption class="ac-caption hud-label"><span>ARCHIVE // MISSION 2000</span><span class="dim">IMG_0001</span></figcaption>
+        <figcaption class="ac-caption hud-label"><span>OSB // VISUAL ARCHIVE</span><span class="dim">FEED_02</span></figcaption>
       </figure>
     </div>
+
+    <article class="bio-dossier" aria-labelledby="bio-title">
+      <div class="bio-heading" data-reveal>
+        <div>
+          <p class="bio-label">CAREER MEMORY <span aria-hidden="true">//</span> OSB</p>
+          <h3 id="bio-title">BUILT IN THE<br><span>UNDERGROUND.</span></h3>
+        </div>
+        <p class="bio-route" aria-label="From Florida to Colorado to a global audience"><span>FL</span><i aria-hidden="true"></i><span>CO</span><i aria-hidden="true"></i><span>WORLD</span></p>
+      </div>
+
+      <dl class="bio-metrics" aria-label="Career highlights" data-reveal>
+        <div><dt>ORLANDO RESIDENCIES</dt><dd>22<span>YRS</span></dd></div>
+        <div><dt>ORIGINAL TRACKS IN ONE YEAR</dt><dd>50<span>+</span></dd></div>
+        <div><dt>RELEASE PLATFORMS</dt><dd>20<span>+</span></dd></div>
+      </dl>
+
+      <ol class="bio-record" aria-label="Artist journey">
+        <li data-reveal>
+          <p class="bio-label"><span class="bio-node" aria-hidden="true">01</span> ORLANDO</p>
+          <h4>Roots in the groove.</h4>
+          <p>Residencies at Roxy, The Club at Firestone and House of Blues. Radio sets on 102 Jams and 95.3 The Party.</p>
+        </li>
+        <li data-reveal>
+          <p class="bio-label"><span class="bio-node" aria-hidden="true">02</span> DENVER</p>
+          <h4>A new altitude.</h4>
+          <p>Colorado festival stages: Global Dance Festival, Supernatural Dance Festival and Decadence.</p>
+        </li>
+        <li data-reveal>
+          <p class="bio-label"><span class="bio-node" aria-hidden="true">03</span> WORLDWIDE</p>
+          <h4>Beyond the booth.</h4>
+          <p>Original productions through Mondo Music. A lifelong commitment to the craft, across turntables, studio sessions and global releases.</p>
+        </li>
+      </ol>
+
+      <div class="bio-bill" data-reveal>
+        <p class="bio-label">SHARED STAGES WITH</p>
+        <p>Paul Oakenfold <span aria-hidden="true">/</span> Markus Schulz <span aria-hidden="true">/</span> Darude <span aria-hidden="true">/</span> George Acosta</p>
+      </div>
+
+      <div class="bio-sound" data-reveal>
+        <p class="bio-label">SOUND SIGNATURE</p>
+        <ul aria-label="Musical genres">
+          <li>Electro House</li><li>Tech House</li><li>Slap House</li><li>Bass House</li><li>Vocal Trance</li><li>Vocal Breakz</li>
+        </ul>
+      </div>
+
+      <footer class="bio-foot">
+        <p>THE-LOST-ART <span aria-hidden="true">//</span> VERIFIED DJ &amp; LONGTIME SUPPORTER</p>
+        <a href="https://the-lost-art.com/dj-roster/osb" target="_blank" rel="noopener noreferrer">READ FULL BIOGRAPHY <span aria-hidden="true">↗</span><span class="sr-only"> on The-Lost-Art (opens in a new tab)</span></a>
+      </footer>
+    </article>
   </section>
 
   <!-- B02 VEHICLE BAY -->

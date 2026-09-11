@@ -1,0 +1,137 @@
+/* OSB // artist dossier. Extends the existing facility without adding a room. */
+
+.artist-id {
+  background: linear-gradient(145deg, rgba(30, 15, 53, .94), rgba(9, 5, 18, .95));
+}
+.artist-id .idc-head { font-size: 12px; color: #b7a1d1; }
+.artist-id .id-name { margin-bottom: 18px; }
+.artist-disciplines {
+  font-size: 12px; line-height: 1.9; letter-spacing: .1em; color: #bda8d9;
+}
+.artist-disciplines span { color: var(--vio-hot); }
+.artist-intro {
+  margin: 24px 0; max-width: 42ch;
+  font-size: 16px; line-height: 1.85; letter-spacing: -.015em; color: #e1d5ef;
+}
+.artist-id .id-rows { font-size: 12px; }
+.artist-id .id-rows dt { color: #ad96c9; }
+.artist-id .id-rows dd { color: #e1d5ef; text-align: right; }
+
+.bio-dossier {
+  position: relative; max-width: 1180px; margin: clamp(80px, 12vh, 140px) auto 0;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid rgba(190, 160, 255, .28);
+  border-top-color: rgba(201, 166, 255, .6);
+  background: radial-gradient(ellipse at 90% 0, rgba(83, 34, 133, .19), transparent 45%), #0b0613;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, .3);
+}
+.bio-dossier::before {
+  content: ''; position: absolute; top: -1px; left: -1px;
+  width: 80px; height: 2px; background: #cfafff;
+  box-shadow: 0 0 18px rgba(180, 122, 255, .42);
+}
+.bio-label {
+  font-family: var(--font-hud); font-size: 12px; line-height: 1.6;
+  letter-spacing: .14em; color: #bba1d7;
+}
+.bio-label > span:not(.bio-node) { color: var(--vio-hot); }
+.bio-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+#bio-title {
+  margin-top: 18px; font-family: var(--font-display); font-weight: 500;
+  font-size: clamp(24px, 3.3vw, 43px); line-height: 1.28;
+  letter-spacing: .035em; color: var(--ink-hi);
+}
+#bio-title span {
+  color: #c5a3ed;
+  background: linear-gradient(100deg, #f0e3ff, #c5a3ed 55%, #9562c8);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.bio-route {
+  display: flex; align-items: center; gap: 10px; padding-bottom: 9px;
+  font-size: 12px; letter-spacing: .08em; color: #bba1d7; white-space: nowrap;
+}
+.bio-route i { width: 24px; height: 1px; background: linear-gradient(90deg, #755294, #cfafff); }
+.bio-metrics {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 38px; padding: 28px 0 30px;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.bio-metrics > div { display: flex; flex-direction: column; padding: 0 26px; border-left: 1px solid var(--line); }
+.bio-metrics > div:first-child { padding-left: 0; border-left: 0; }
+.bio-metrics > div:last-child { padding-right: 0; }
+.bio-metrics dd {
+  order: -1;
+  font-family: var(--font-display); font-size: clamp(36px, 4.2vw, 56px);
+  font-weight: 500; line-height: 1.1; letter-spacing: -.035em; color: var(--ink-hi);
+}
+.bio-metrics dd span { margin-left: 8px; font-size: 14px; letter-spacing: .04em; color: #c39ae9; }
+.bio-metrics dt { margin-top: 14px; max-width: 25ch; font-size: 12px; line-height: 1.6; letter-spacing: .06em; color: #bba1d7; }
+.bio-record {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px; margin: 44px 0 38px;
+}
+.bio-record li { min-width: 0; position: relative; }
+.bio-record .bio-label { display: flex; align-items: center; gap: 12px; }
+.bio-record .bio-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.bio-node {
+  display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px;
+  border: 1px solid rgba(190, 160, 255, .35); color: #d7b5ff;
+  font-size: 12px; letter-spacing: 0;
+}
+.bio-record h4 {
+  margin: 20px 0 12px; font-family: var(--font-display); font-weight: 500;
+  font-size: 16px; line-height: 1.6; color: var(--ink-hi);
+}
+.bio-record li > p:last-child { font-size: 16px; line-height: 1.85; letter-spacing: -.025em; color: #cbbbdc; }
+.bio-bill, .bio-sound { display: grid; grid-template-columns: 190px 1fr; gap: 18px; padding: 24px 0; border-top: 1px solid var(--line); }
+.bio-bill > p:last-child { font-size: 16px; line-height: 1.85; color: #e1d5ef; }
+.bio-bill > p:last-child span { margin: 0 5px; color: #8f60b7; }
+.bio-sound ul { display: flex; flex-wrap: wrap; gap: 12px 22px; }
+.bio-sound li { color: #d1b7e9; font-size: 14px; line-height: 1.6; }
+.bio-foot {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  gap: 16px 24px; margin-top: 14px; padding-top: 24px; border-top: 1px solid var(--line-hot);
+}
+.bio-foot p { font-size: 12px; line-height: 1.8; letter-spacing: .045em; color: #bba1d7; }
+.bio-foot p > span { color: var(--vio-hot); }
+.bio-foot a {
+  display: inline-flex; align-items: center; gap: 14px; min-height: 44px;
+  font-size: 12px; letter-spacing: .09em; color: #ead8ff;
+  text-decoration: underline; text-decoration-color: #77528f; text-underline-offset: 6px;
+}
+.bio-foot a:hover { color: #fff; text-decoration-color: #d0a4ff; }
+
+@media (min-width: 1021px) {
+  .room-operator .operator-grid { align-items: center; }
+}
+@media (max-width: 1020px) and (min-width: 761px) {
+  .room-operator .operator-grid { grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: center; }
+  .artist-id { padding: 26px; }
+  .bio-route { display: none; }
+}
+@media (max-width: 760px) {
+  .bio-dossier { margin-top: 74px; padding: 24px 20px; }
+  .bio-heading { display: block; }
+  .bio-route { margin-top: 22px; padding-bottom: 0; }
+  #bio-title { font-size: clamp(20px, 5.9vw, 38px); letter-spacing: .015em; }
+  .bio-metrics { gap: 20px 0; padding: 25px 0; }
+  .bio-metrics > div { padding: 0 12px; }
+  .bio-metrics dd { font-size: 32px; }
+  .bio-metrics dd span { display: block; margin: 5px 0 0; font-size: 12px; }
+  .bio-metrics dt { font-size: 12px; letter-spacing: 0; overflow-wrap: anywhere; }
+  .bio-record { grid-template-columns: 1fr; gap: 30px; margin: 30px 0; }
+  .bio-record h4 { margin-top: 14px; }
+  .bio-bill, .bio-sound { grid-template-columns: 1fr; gap: 12px; }
+  .bio-foot { align-items: flex-start; }
+  .artist-id .id-rows > div { gap: 12px; }
+  .artist-id .id-rows dd { letter-spacing: .04em; }
+}
+@media (max-width: 359px) {
+  .bio-metrics { grid-template-columns: 1fr; gap: 0; }
+  .bio-metrics > div, .bio-metrics > div:first-child {
+    display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: center;
+    padding: 16px 0; border-left: 0;
+  }
+  .bio-metrics > div + div { border-top: 1px solid var(--line); }
+  .bio-metrics dt { margin: 0; }
+}

@@ -10,6 +10,10 @@
   line-height: 1.02;
   letter-spacing: .04em;
   white-space: nowrap;
+  filter: drop-shadow(0 2px 22px rgba(138, 92, 255, .30)) drop-shadow(0 0 2px rgba(255, 255, 255, .18));
+  transition: filter .45s var(--ease-out);
+}
+.chrome-title:not(.chrome-title--split) {
   background: linear-gradient(180deg,
     #ffffff 0%, #f0ecfb 16%, #c6bfe0 32%, #857BA8 45%,
     #2c2350 51%, #6a5f95 56%, #d9d2f0 68%, #f8f6ff 76%,
@@ -17,17 +21,16 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 2px 22px rgba(138, 92, 255, .30)) drop-shadow(0 0 2px rgba(255, 255, 255, .18));
 }
-.chrome-title { transition: filter .45s var(--ease-out); }
 .chrome-title .ct-l {
   position: relative;
   display: inline-block;
   cursor: pointer;
   will-change: transform;
-  /* split letters must carry their own chrome — a parent's background-clip:text
-     does not paint through child spans. the liquid metal flows INSIDE the
-     glyphs (animated gradient position), no geometry ever moves. */
+}
+.chrome-title .ct-glyph {
+  /* Clip the chrome to the glyph alone so tooltip text cannot enter its mask. */
+  display: block;
   background: linear-gradient(180deg,
     #ffffff 0%, #f0ecfb 12%, #c6bfe0 26%, #857BA8 38%,
     #2c2350 46%, #6a5f95 52%, #d9d2f0 62%, #f8f6ff 70%,
@@ -43,7 +46,7 @@
   0%, 100% { background-position: 50% 0%; }
   50% { background-position: 50% 72%; }
 }
-body.motion-off .chrome-title .ct-l { animation: none; }
+body.motion-off .chrome-title .ct-glyph { animation: none; }
 /* each initial reveals its meaning in a sleek HUD chip */
 .chrome-title .ct-l::after {
   content: attr(data-word);
@@ -64,9 +67,6 @@ body.motion-off .chrome-title .ct-l { animation: none; }
 .chrome-title.lit {
   filter: drop-shadow(0 2px 34px rgba(160, 110, 255, .5)) drop-shadow(0 0 4px rgba(255, 255, 255, .3)) brightness(1.07);
 }
-
-/* (the old full-word sheen overlay is gone — a static ghost word over
-   animated letters was the source of the glitchy look) */
 
 /* lighter gradient treatment for section titles */
 .title-grad {

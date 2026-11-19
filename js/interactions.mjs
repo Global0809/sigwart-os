@@ -90,16 +90,18 @@ function initTitle() {
   const text = title.textContent.trim();
   title.textContent = '';
   title.setAttribute('aria-label', text);
-  const letters = [];
+  title.classList.add('chrome-title--split');
   [...text].forEach((ch, i) => {
     const s = document.createElement('span');
     s.className = 'ct-l';
-    s.textContent = ch;
     s.setAttribute('aria-hidden', 'true');
     s.dataset.word = TITLE_WORDS[ch] || '';
-    s.style.animationDelay = (i * 0.28) + 's';   // liquid metal ripples across the word
+    const glyph = document.createElement('span');
+    glyph.className = 'ct-glyph';
+    glyph.textContent = ch;
+    glyph.style.animationDelay = (i * 0.28) + 's';   // liquid metal ripples across the word
+    s.appendChild(glyph);
     title.appendChild(s);
-    letters.push(s);
     s.addEventListener('pointerenter', () => {
       audio.blip(TITLE_NOTES[i % TITLE_NOTES.length], 0.14, 0.07);
       if (window.gsap && state.motionOK) window.gsap.to(s, { scale: 1.12, duration: 0.25, ease: 'power2.out' });

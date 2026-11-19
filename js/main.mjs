@@ -12,7 +12,7 @@ import { initCamera } from './gl/camera.mjs';
 import { initDrones } from './gl/drones.mjs';
 import { initScroll } from './scroll.mjs';
 import { initOverlays } from './overlays.mjs';
-import { initInteractions } from './interactions.mjs';
+import { initInteractions } from './interactions.mjs?v=8';
 import { sharedMats } from './gl/world.mjs';
 import { getDroneMats } from './gl/drones.mjs';
 
